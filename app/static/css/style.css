@@ -1,0 +1,176 @@
+@font-face {
+    font-family: righteous;
+    src: url(../fonts/Righteous-Regular.ttf);
+}
+
+@font-face {
+    font-family: squada;
+    src: url(SquadaOne-Regular.ttf);
+}
+
+@font-face {
+    font-family: khand;
+    src: url(../fonts/Khand-Regular.ttf);
+}
+
+a:link {
+    color: green;
+}
+
+a:visited {
+    color: green;
+}
+
+a:hover {
+    color: green !important;
+}
+
+a:active {
+    color: green;
+}
+
+.invohelper_logo {
+    font-family: righteous;
+    font-size: 48px;
+    color: black;
+}
+
+.hr-navbar {
+    position: absolute;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0px;
+    margin: 0;  
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center 
+}
+
+.footer {
+    position:absolute;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #f5f5f5;
+}
+  
+.content {
+    position: relative;
+    width: 100%;
+
+    z-index: 10;
+    height: 75%;
+    max-height: 1340px;
+    overflow-y: scroll;  
+}
+
+ul.square-menu {
+    position: absolute;
+    list-style-type: none;
+    list-style: none;
+    padding: 0;
+    width: 90%;
+    margin: 40px auto;
+}
+    
+ul.square-menu li{
+    float: left;
+    margin:20px;	
+}
+    
+ul.square-menu li .menu-item { 
+    text-decoration: none;
+    background:rgba(0, 153, 76);
+    color: white;
+    outline: 4px solid rgba(0, 153, 76);
+    border: 1px solid white;
+    font-family: khand;
+    font-weight: normal;
+    font-size: 150%;
+    text-align: right;
+    width: 225px;
+    height: 225px;
+    padding-top: 10px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+    -webkit-transition: all 0.1s ease-in;
+    -ms-transition: all 0.1s ease-in;
+    -moz-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+
+ul.square-menu li .menu-item:hover {
+    text-decoration: none !important;
+    background: rgb(128, 128, 128);
+    outline: 4px solid rgb(128, 128, 128);
+    -moz-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+    -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+}
+
+.row-up {
+    height: 80%;
+}
+
+.row-down {
+    height: 20%;
+}
+
+.content-header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    font-family: khand;
+}
+
+.header-btn {
+    margin-right: 15px;
+    text-align: right;
+}
+
+.thead-custom {
+    font-family: khand;
+}
+
+.col-header{
+    margin-top: 15px;
+    font-family: khand;
+}
+
+.col-item-data {
+    margin-top: 15px;
+}
+
+h4 {
+    margin-top: 15px;
+}
+
+.item-info {
+    padding-left: 30px;
+}
+
+.item-list-header {
+    margin-bottom: 10px;
+    margin-left: 15px;
+    font-family: khand;
+}
+
+img {
+    margin-left: 225px;
+    width: 50%;
+    height: 80%;
+    object-fit: fill;
+  }
+
+.item-list {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
