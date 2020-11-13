@@ -1,0 +1,101 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<script>
+    $(document).ready(function() {
+        $("#stocktakingsEnded").hide();
+        $("#stEnded").click(function() {
+            $("#stocktakingsPending").hide();
+            $("#stocktakingsEnded").show();
+            $("#steButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
+            $("#stpButton").css('background-color', 'transparent').css('border', '0px solid black');
+        });
+        $("#stPending").click(function() {
+            $("#stocktakingsEnded").hide();
+            $("#stocktakingsPending").show();
+            $("#stpButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
+            $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
+        });
+    });
+</script>
+<div class="item-list">
+    <div class="container">
+        <div class="content-header">
+            <div class="row">
+                <div class="col">
+                    <h2>Lista inwentaryzacji:</h3>
+                </div>
+                <div class="col header-btn">
+
+                </div>
+            </div>
+        </div>
+        <div class="item-list-header">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <a id="stPending"><div class="col" id="stpButton" style="border: 1px solid gray; padding-top: 15px; background-color: #f8f9fa;">
+                            <h4>Trwające</h4>
+                        </div></a>
+                        <a id="stEnded"><div class="col" id="steButton" style=" padding-top: 15px;">
+                            <h4>Zakończone</h4>
+                        </div></a>            
+                    </div>
+                    <hr/>
+                </div>
+                <div class="col">
+
+                </div>
+            </div>
+        </div>
+        <div id="stocktakingsPending">
+            <table class="table table-striped">
+                <thead class="thead-custom">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Data rozpoczęcia</th>
+                    <th scope="col">Data zakończenia</th>
+                    <th scope="col">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for stocktaking in stocktakings_pending %}
+                        <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                            <td><a href="#">{{ stocktaking.id }}</a>
+                            <td class="hidden-xs">{{ stocktaking.date_start}}</td>
+                            <td class="hidden-xs">{{ stocktaking.date_stop}}</td>
+                            <td>
+                                <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_details',inv_id=stocktaking.id)}}">Podgląd</a>
+                            </td>
+                        </tr>
+                        {% endfor %}                                 
+                </tbody>
+            </table>
+        </div>
+        <div id="stocktakingsEnded">
+            <table class="table table-striped">
+                <thead class="thead-custom">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Data rozpoczęcia</th>
+                    <th scope="col">Data zakończenia</th>
+                    <th scope="col">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for stocktaking in stocktakings_ended %}
+                        <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                            <td><a href="#">{{ stocktaking.id }}</a>
+                            <td class="hidden-xs">{{ stocktaking.date_start}}</td>
+                            <td class="hidden-xs">{{ stocktaking.date_stop}}</td>
+                            <td>
+                                <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_details',inv_id=stocktaking.id)}}">Podgląd</a>
+                                <a type="button" class="btn btn-info btn-custom" href="">Drukuj</a>
+                            </td>
+                        </tr>
+                        {% endfor %}                                  
+                </tbody>
+            </table>  
+        </div>      
+    </div>
+</div>
+{%- endblock -%}

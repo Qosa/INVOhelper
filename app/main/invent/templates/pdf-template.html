@@ -1,0 +1,88 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row" style="margin-top: 50px; text-align: center;">
+            <div class="col" style="border: 1px solid black; padding-top: 50px;">
+                <span class="invohelper_logo" href="#">INV<span style="color: green;">O</span>helper</span>
+            </div>
+            <div class="col">
+                <div class="row" style="border: 1px solid black; padding: 20px 20px 20px 20px;">
+                    <h5 style="margin-left: 150px;">INWENTARYZACJA NR. {{ stocktaking.id }}</h5>
+                </div>    
+                <div class="row" style="border: 1px solid black;">
+                    <div class="col" >
+                        <b>LOKALIZACJA</b>
+                    </div>
+                    <div class="col">
+                        {{ stocktaking.localization }}
+                    </div>
+                </div>
+                <div class="row" style="border: 1px solid black;">
+                    <div class="col">
+                        <b>MPK</b>
+                    </div>
+                    <div class="col">
+                        {{ stocktaking.mpk_number }}
+                    </div>                    
+                </div>
+                <div class="row" style="border: 1px solid black;">
+                    <div class="col">
+                        <b>PRZEW. KOMISJI</b>
+                    </div>
+                    <div class="col">
+                        {{ stocktaking.commissioner }}
+                    </div>                     
+                </div>
+                <div class="row" style="border: 1px solid black;">
+                    <div class="col">
+                        <b>SKŁAD KOMISJI</b>
+                    </div>
+                    <div class="col">
+                        {{ stocktaking.com_members }}
+                    </div>                    
+                </div>                                                              
+            </div>            
+        </div>
+        <div class="row" style="border: 1px solid black;">
+            <div class="col">
+                <div id="stocktakingsPending">
+                    <table class="table">
+                        <thead class="thead">
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Numer inw.</th>
+                            <th scope="col">Typ</th>
+                            <th scope="col">Opis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for item in items %}
+                                <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                    <td class="hidden-xs">{{ item.id }}</td>
+                                    <td class="hidden-xs">{{ item.inv_number }}</td>
+                                    <td class="hidden-xs">{{ item.item_id }}</td>
+                                    <td class="hidden-xs">{{ item.localization}}</td>
+                                </tr>
+                                {% endfor %}                                 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 50px;">
+            <div class="col" style="border: 1px solid black; padding-bottom: 100px;">
+                Komentarz
+            </div>
+            <div class="col" style="border: 1px solid black; padding-bottom: 100px;">
+                Podpis
+            </div>            
+        </div>
+    </div>
+</body>

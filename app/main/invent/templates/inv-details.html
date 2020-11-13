@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block mycontent %}
+<script>
+    $(document).ready(function() {
+        $("#stocktakingsNonevidenced").hide();
+        $("#stocktakingsUnknown").hide();
+        $("#stNonevidenced").click(function() {
+            $("#stocktakingsEvidenced").hide();
+            $("#stocktakingsUnknown").hide();
+            $("#stocktakingsNonevidenced").show();
+            $("#stnButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
+            $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
+            $("#stuButton").css('background-color', 'transparent').css('border', '0px solid black');
+        });
+        $("#stEvidenced").click(function() {
+            $("#stocktakingsEvidenced").show();
+            $("#stocktakingsUnknown").hide();
+            $("#stocktakingsNonevidenced").hide();
+            $("#steButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
+            $("#stnButton").css('background-color', 'transparent').css('border', '0px solid black');
+            $("#stuButton").css('background-color', 'transparent').css('border', '0px solid black');
+        });
+        $("#stUnknown").click(function() {
+            $("#stocktakingsEvidenced").hide();
+            $("#stocktakingsUnknown").show();
+            $("#stocktakingsNonevidenced").hide();
+            $("#stuButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
+            $("#stnButton").css('background-color', 'transparent').css('border', '0px solid black');
+            $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
+        });        
+    });
+</script>
+    <!-- CONTENT -->
+    <div class="container">
+        <div class="content-header">
+            <div class="row">
+                <div class="col">
+                    <h2>Inwentaryzacja</h2>
+                </div>
+                <div class="col header-btn">
+                    {%- if stocktaking.finished == false -%}
+                    <button type="button" class="btn btn-warning">Edytuj</button>
+                    <button type="button" class="btn btn-danger">Zakończ</button>
+                    {%- else -%}
+                    <a type="button" class="btn btn-info" style="color: white;" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id) }}">Podsumowanie</a>
+                    {%- endif -%}
+                </div>
+            </div>
+            <hr/>
+        </div>
+
+        <div class="item-info" style="height: 30%;">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Stan inwentaryzacji:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {%- if stocktaking.finished == false -%}
+                            <h5 style="color: green;">TRWAJĄCA</h5>
+                            {%- else -%}
+                            <h5 style="color: red;">ZAKOŃCZONA</h5>
+                            {%- endif -%}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Nr. inwentaryzacji:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ stocktaking.id }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Data rozpoczęcia:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ stocktaking.date_start.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div>  
+                    {%- if stocktaking.finished == True -%}
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Data zakończenia:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ stocktaking.date_stop.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div> 
+                    {%- endif -%}
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Lokalizacja:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ stocktaking.localization }}
+                        </div>
+                    </div>  
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Przew. komisji:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ stocktaking.commissioner }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Członkowie komisji:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {%- for member in stocktaking.com_members -%}
+                            <div class="row" style="padding-left: 15px;">
+                                {{ member }}
+                            </div>    
+                            {%- endfor -%}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Harmonogram:</h3>
+                        </div>
+                        <div class="col col-item-data">
+
+                        </div>
+                    </div>                                                                                                    
+                </div>
+            </div>
+        </div>
+
+        <div class="item-list">
+            <div class="container">
+                <div class="item-list-header">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Spis z natury:</h4>
+                        </div>
+                        <div class="col header-btn">
+                            <a type="button" class="btn btn-success btn-custom" href="">Dodaj</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-list-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <a id="stEvidenced"><div class="col" id="steButton" style="border: 1px solid gray; padding-top: 15px; background-color: #f8f9fa;">
+                                    <h4>Spisane</h4>
+                                </div></a>
+                                {%- if stocktaking.finished == True -%}
+                                <a id="stNonevidenced"><div class="col" id="stnButton" style=" padding-top: 15px;">
+                                    <h4>Różnice</h4>
+                                </div></a>  
+                                {%- endif -%}      
+                                <a id="stUnknown"><div class="col" id="stuButton" style=" padding-top: 15px;">
+                                    <h4>Nieznane</h4>
+                                </div></a>      
+                            </div>
+                            <hr/>
+                        </div>
+                        <div class="col">
+        
+                        </div>
+                    </div>
+                </div>
+                <div id="stocktakingsEvidenced">
+                    <table class="table table-striped">
+                        <thead class="thead-custom">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nr. inw.</th>
+                                <th scope="col">Lokalizacja</th>
+                                <th scope="col">Data dodania</th>
+                                <th scope="col">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for item in items_evidenced %}
+                                <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                    <td><a href="#">{{ item.id }}</a>
+                                        <td class="hidden-xs">{{ item.inv_number}}</td>
+                                        <td class="hidden-xs">{{ item.localization }}</td>
+                                        <td class="hidden-xs">{{ item.add_date}}</td>
+                                        <td>
+                                            <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Podgląd</a>
+                                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete',item_id=item.id,next=request.full_path) }}">Usuń</a>
+                                        </td> 
+                                </tr>                                   
+                                {% endfor %}                                  
+                        </tbody>
+                    </table>  
+                </div>
+                <div id="stocktakingsNonevidenced">
+                    <table class="table table-striped">
+                        <thead class="thead-custom">
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Data rozpoczęcia</th>
+                            <th scope="col">Data zakończenia</th>
+                            <th scope="col">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for item in items_nonevidenced %}
+                                <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                    <td><a href="#">{{ item.id }}</a>
+                                        <td class="hidden-xs">{{ item.inv_number}}</td>
+                                        <td class="hidden-xs">{{ item.localization }}</td>
+                                        <td class="hidden-xs">{{ item.add_date}}</td>
+                                        <td>
+                                            <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Podgląd</a>
+                                        </td> 
+                                </tr>
+                                {% endfor %}                                  
+                        </tbody>
+                    </table>  
+                </div>                 
+                <div id="stocktakingsUnknown">
+                    <table class="table table-striped">
+                        <thead class="thead-custom">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nr. inw.</th>
+                                <th scope="col">Lokalizacja</th>
+                                <th scope="col">Data dodania</th>
+                                <th scope="col">Opis</th>
+                                <th scope="col">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for item in items_unknown %}
+                                <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                    <td><a href="#">{{ item.id }}</a>
+                                        <td class="hidden-xs">{{ item.inv_number}}</td>
+                                        <td class="hidden-xs">{{ item.localization }}</td>
+                                        <td class="hidden-xs">{{ item.add_date }}</td>
+                                        <td class="hidden-xs">{{ item.description }}</td>
+                                        <td>
+                                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Usuń</a>
+                                        </td> 
+                                </tr>                                   
+                                {% endfor %}                                  
+                        </tbody>
+                    </table>  
+                </div> 
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

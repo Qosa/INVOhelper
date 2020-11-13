@@ -4,3 +4,5 @@
 from .admin import admin
 from .user import user
 from .items import items
+from .invent import invent
+from .comments import comments

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{%- from "bootstrap/pagination.html" import render_pagination -%}
+{%- import "bootstrap/wtf.html" as wtf -%}
+{% block mycontent %}
+    <!-- CONTENT -->
+    <div class="container">
+        <div class="content-header">
+            <div class="row">
+                <div class="col">
+                    <h2>Wystąpienie przedmiotu</h2>
+                </div>
+                <div class="col header-btn">
+                    <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit_occurrence',occur_id=occurrence.id) }}">Edytuj</a>
+                    <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete_occurrence',occur_id=occurrence.id) }}">Usuń</a>
+                </div>
+            </div>
+            <hr/>
+        </div>
+
+        <div class="item-info" style="height: 30%;">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Typ:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            <a href="{{ url_for('items.details',item_id=occurrence.item_id) }}">{{ occurrence.get_item_name(occurrence.item_id) }}</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Data dodania:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ occurrence.add_date }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Lokalizacja:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ occurrence.localization }}
+                        </div>
+                    </div>    
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Numer inwentarzowy:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ occurrence.inv_number }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Załączniki:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ occurrence.documents }}
+                        </div>
+                    </div>                                                                                               
+                </div>
+            </div>
+        </div>
+
+        <ul class="list-group">
+            <li class="list-group-item list-group-item col-header">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-8">
+                        <h4>Załączniki:</h4>
+                    </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        <button type="button" class="btn btn-custom btn-success btn-block" data-toggle="modal"
+                                data-target="#myModal">
+                            Dodaj załącznik
+                        </button>
+                    </div>
+                </div>
+            </li>
+            {%- if occurrence.documents -%}
+                <li class="list-group-item clearfix">
+                    <div class="media">
+                        <div class="media-body">
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <div style="display: inline-block; width: 100%; text-align: center;">
+                                        <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',filename=occurrence.documents) }}">
+                                            <i class="far fa-file-alt fa-5x"></i> 
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="txt-overflow" style="display: inline-block; width: 100%; text-align: center;">
+                                        {{ occurrence.documents }}
+                                    </div>
+                                </div>
+                            </div>                       
+                        </div>
+                    </div>
+                </li> 
+            {%- else -%}
+                <li class="list-group-item clearfix">
+                    <div class="media">
+                        <div class="media-body">
+                            <p class="list-group-item-text">Brak załączników</p>
+                        </div>
+                    </div>
+                </li>
+            {%- endif -%}    
+        </ul>
+
+        <ul class="list-group">
+                <li class="list-group-item list-group-item col-header">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-8">
+                            <h4>Komentarze:</h4>
+                        </div>
+                        <div class="col-md-4 col-md-offset-4">
+                            <button type="button" class="btn btn-custom btn-success btn-block" data-toggle="modal"
+                                    data-target="#myModal">
+                                Dodaj komentarz
+                            </button>
+                        </div>
+                    </div>
+                </li>
+                {%- if comments.count() != 0 -%}
+                    {%- for comment in comments -%}
+                    <li class="list-group-item clearfix">
+                        <div class="media">
+                            <div class="media-body">
+                                <p class="list-group-item-text">{{ comment.comment }}</p>
+                                {%- if comment.create_timestamp==comment.edit_timestamp -%}
+                                    <h4>
+                                        <small>
+                                            Przesłany: {{ comment.create_timestamp }}</small>
+                                    </h4>
+                                {%- else -%}
+                                    <h4>
+                                        <small>
+                                            Edytowano: {{ comment.edit_timestamp }}</small>
+                                    </h4>
+                                {%- endif -%}
+                            </div>
+                        </div>
+                    </li>
+                    {%- endfor -%}   
+                {%- else -%}
+                    <li class="list-group-item clearfix">
+                        <div class="media">
+                            <div class="media-body">
+                                <p class="list-group-item-text">Brak komentarzy</p>
+                            </div>
+                        </div>
+                    </li>
+                {%- endif -%}    
+        </ul>        
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <form action="{{ url_for('comments.add',occur_id=occurrence.id) }}" method="post" class="form"
+                      role="form">
+                    {{ form.hidden_tag() }}
+                    <div class="modal-body">
+                        {{ wtf.form_field(form.comment) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj
+                        </button>
+                        {{ wtf.form_field(form.submit,button_map={'submit':'success'}) }}
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->    
+{% endblock %}

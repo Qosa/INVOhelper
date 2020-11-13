@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block content %}
+{% block mycontent %}
     <!-- CONTENT -->
     <div class="container">
         <div class="content-header">
@@ -8,7 +8,7 @@
                     <h2>Lista przedmiotów:</h3>
                 </div>
                 <div class="col header-btn">
-                    <button type="button" class="btn btn-success">Dodaj</button>
+                    <a type="button" class="btn btn-success btn-custom" href="{{ url_for('items.add') }}">Dodaj</a>
                 </div>
             </div>
         </div>
@@ -19,40 +19,23 @@
                 <th scope="col">Nr. inw.</th>
                 <th scope="col">Nazwa</th>
                 <th scope="col">Ilość</th>
+                <th scope="col">Akcje</th>
               </tr>
             </thead>
             <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td><a href="item-details.html">1000001</a></td>
-                        <td>Ławka 2os.</td>
-                        <td>75</td>
-                        </a>
+                    {% for item in items %}
+                    <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                        <td><a href="#">{{ item.id }}</a>
+                        <td class="hidden-xs">{{ item.name}}</td>
+                        <td class="hidden-xs">{{ item.inv_number}}</td>
+                        <td class="hidden-xs">{{ item.description}}</td>
+                        <td>
+                            <a type="button" class="btn btn-success btn-custom" href="{{ url_for('items.details',item_id=item.id) }}">Podgląd</a>
+                            <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit',item_id=item.id) }}">Edytuj</a>
+                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete',item_id=item.id,next=request.full_path) }}">Usuń</a>
+                        </td>
                     </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>1000002</td>
-                <td>Krzesło drewn.</td>
-                <td>150</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>1000003</td>
-                <td>Tablica zielona</td>
-                <td>8</td>
-              </tr>
-              <tr>
-                <th scope="row">4</th>
-                <td>1000004</td>
-                <td>Tablica korkowa</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <th scope="row">5</th>
-                <td>1000005</td>
-                <td>Biurko drewn.</td>
-                <td>10</td>
-              </tr>                            
+                    {% endfor %}                 
             </tbody>
           </table>
     </div>

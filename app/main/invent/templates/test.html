@@ -1,0 +1,11 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<form method=post>
+    {{ form.commissioner_name }}
+    {{ form.commissioner_surname }}
+    {{ form.localization }}
+    {{ form.mpk_number }}
+    {{ form.submit }}
+    <p><input type=submit value=Register>
+</form>    
+{%- endblock -%}  

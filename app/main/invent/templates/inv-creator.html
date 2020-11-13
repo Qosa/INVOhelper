@@ -1,0 +1,262 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<script>
+    $(document).ready(function() {
+
+    var nav = 0
+    var len = 0
+    $("#scheduler").hide();
+    $("#eventsList").hide();
+    $("#noEvents").hide();
+    $("#itemsScanning").hide();
+    $("#prevStep").hide();
+    $("#addNewField").click(function() {
+        $('#addComMember').clone().find(':input').each(function (idx, ele) {
+        ele.name = ele.name + len;
+        ele.id = ele.id + len;
+        ele.value = '';
+    }).end().find('.form-group').toggle(true).end()
+            .appendTo('#flist_members').slideDown('slow');
+            len += 1;    
+        });
+
+    $("#nextStep").click(function() {
+        if(nav == 0) {
+            $("#prevStep").show();
+            $("#comMembers").css('color', 'black');
+            $("#schedule").css('color', 'green');
+            $("#commissionMembers").hide();
+            $("#scheduler").show();
+            $("#noEvents").appendTo('#events').show();
+            nav += 1
+        } else if (nav == 1) {
+            $("#prevStep").show();
+            $("#nextStep").html('Rozpocznij Inwentaryzację');
+            $("#schedule").css('color', 'black');
+            $("#scanner").css('color', 'green');
+            $("#itemsScanning").show()
+            $("#scheduler").hide();
+            nav += 1
+        } else {
+            $("#nextStep").attr('href','{{ url_for("invent.inv_list") }}');
+        }
+    });
+
+    $("#prevStep").click(function() {
+        if(nav == 1) {
+            $("#prevStep").hide();
+            $("#comMembers").css('color', 'green');
+            $("#schedule").css('color', 'black');
+            $("#scheduler").hide();
+            $("#commissionMembers").show().fadeIn(800);;
+            nav -= 1
+        } else if (nav == 2){
+            $("#nextStep").html('Następny krok <i class="fas fa-chevron-right"></i>');
+            $("#scanner").css('color', 'black');  
+            $("#schedule").css('color', 'green');  
+            $("#itemsScanning").hide(); 
+            $("#scheduler").show();    
+            nav -= 1 
+        }
+    });    
+
+    $("#addNewEvent").click(function() {
+        $("#noEvents").hide();
+        $("#noEvents").replaceWith($("#eventsList"));
+        $("#eventsList").show();
+    });
+
+    $("#addNextEvent").click(function() {
+        $('#newEvent').clone().find(':input').each(function (idx, ele) {
+        ele.name = ele.name + len;
+        ele.id = ele.id + len;
+        ele.value = '';
+    }).end().find('.form-group').toggle(true).end()
+            .appendTo('#flist_schedule').slideDown('slow');
+            len += 1;    
+        });    
+
+});
+</script>
+
+<br/>
+<div class="col-md-12" style="display: inline-block; width: 100%; text-align: center;">
+    <h2 class="content-header">Kreator inwentaryzacji</h2>
+</div>
+
+<br/><br/>
+
+<!-- STEPPER -->
+<div class="row">
+    <div class="col">
+
+    </div>
+    <div class="col-md-1">
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center;">
+                <i id="comMembers" class="fas fa-users fa-5x" style="color: green;"></i>
+            </div>    
+        </div>
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center; font-family: khand;">
+                Skład komisji            
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div style="display: inline-block; width: 100%; text-align: center;">
+            <i class="fas fa-chevron-right fa-3x"></i>
+        </div>    
+    </div>
+    <div class="col-md-1">
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center;">
+                <i id="schedule" class="far fa-calendar-alt fa-5x"></i>
+            </div>    
+        </div>
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center; font-family: khand;">
+                Harmonogram          
+            </div>
+        </div> 
+    </div>
+    <div class="col-md-3">
+        <div style="display: inline-block; width: 100%; text-align: center;">
+            <i class="fas fa-chevron-right fa-3x"></i>
+        </div>
+    </div>    
+    <div class="col-md-1">
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center;">
+                <i id="scanner" class="fas fa-barcode fa-5x"></i>              
+            </div>
+        </div>
+        <div class="row">
+            <div style="display: inline-block; width: 100%; text-align: center; font-family: khand;">
+                Spis    
+            </div>
+        </div> 
+    </div> 
+    <div class="col">
+
+    </div>    
+</div>
+<hr/>
+
+<!-- CONTENT -->
+<div class="container" id="mainContent">
+    <form method="POST">
+        <div class="row" id="dynamicContent">
+            <!-- SKLAD KOMISJI-->
+            <div class="container" id="commissionMembers">
+                <h4>Skład komisji</h4> 
+                <p style="color: green;">W tym oknie utworzysz listę członków komisji inwentaryzacyjnej</p>
+                <br/>
+                <h5>Przewodniczący komisji:</h5>
+                <form action="" method="post">
+                    <div class="row" id="addComMember">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="formGroupExampleInput">Imię</label>
+                                        {{ form.commissioner_name }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="formGroupExampleInput">Nazwisko</label>
+                                        {{ form.commissioner_surname }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>            
+                    </div>
+                    <br/>
+                    <h5>Członkowie:</h5>
+                    <button type="button" class="btn btn-success btn-custom" id="addNewField">Dodaj</button> 
+                    {{ form.flist_members }}
+                </form>
+            </div>
+            <!-- HARMONOGRAM -->
+            <div class="container" id="scheduler">
+                <h4>Harmonogram</h4> 
+                <p style="color: green;">W tym miejscu możesz utworzyć harmonogram inwentaryzacji poprzez dodanie zaplanowanych działań</p>
+                <br/>
+                <div class="container" id="events">
+
+                </div>
+            </div>
+            <!-- SPIS -->
+            <div class="container" id="itemsScanning">
+                <h4>Spis z natury</h4> 
+                <p style="color: green;">Po dodaniu członków komisji oraz opracowaniu harmonogramu działań możesz rozpocząć spis z natury.</p>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="localizationInput">Lokalizacja:</label>
+                        {{ form.localization }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="mpkInput">Numer MPK:</label>
+                        {{ form.mpk_number }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="buttons-row">
+            <div class="col-md-6" id="nav-1">
+                <a type="button" class="btn btn-success" id="prevStep"><i class="fas fa-chevron-left"></i> Poprzedni krok</a>
+            </div>
+            <div class="col-md-6" id="nav-2" style="display: inline-block; width: 100%; text-align: right;">
+                <a type="button" class="btn btn-success" id="nextStep">Następny krok <i class="fas fa-chevron-right"></i></a>   
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container" id="noEvents">
+    <div class="col">
+        <div class="row" style="display: inline-block; width: 100%; text-align: center; color: green;">
+            <i class="fas fa-calendar-times fa-9x"></i>
+        </div>
+        <br/><br/>
+        <div class="row" style="display: inline-block; width: 100%; text-align: center; color: green;">
+            Brak zaplanowanych zadań
+        </div>
+    </div>
+    <br/>
+    <div style="display: inline-block; width: 100%; text-align: center;">
+        <button type="button" class="btn btn-success btn-custom" id="addNewEvent">Dodaj wydarzenie</button> 
+    </div>    
+</div>
+
+<div class="container" id="eventsList">
+    <h5>Lista zadań:</h5>
+    <form action="" method="post">    
+        <div class="row" id="newEvent">
+                <div class='col-sm-6'>
+                    <div class="form-group">
+                        <div class='input-group date'>
+                            <input type="text" class="form-control" id="event-name" placeholder="Zadanie"/>
+                            <input type='date' class="form-control" id="event-date"/>
+                            <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </form>        
+    {{ form.flist_schedule }}
+    <div class="row">
+        <div style="display: inline-block; width: 100%; text-align: center;">
+            <button type="button" class="btn btn-success btn-custom" id="addNextEvent">Dodaj następne</button> 
+        </div>           
+    </div>
+</div>
+{%- endblock -%}  

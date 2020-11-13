@@ -13,6 +13,46 @@
     src: url(../fonts/Khand-Regular.ttf);
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100% !important;
+}
+
+.Site {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+}
+
+.Site-content {
+    -webkit-box-flex: 1 0 auto;
+    -moz-box-flex: 1 0 auto;
+    -webkit-flex: 1 0 auto;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.panel.panel-inverse {
+    -webkit-box-flex: none;
+    -moz-box-flex: none;
+    -webkit-flex: none;
+    -ms-flex: none;
+    flex: none;
+    margin-bottom: 0;
+    background-color: #424242;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+
 a:link {
     color: green;
 }
@@ -45,6 +85,12 @@ a:active {
     display: flex;
     align-items: center;
     justify-content: center 
+}
+
+.messages-top {
+    position: relative;
+    margin-bottom: 180px !important;
+    font-family: righteous;
 }
 
 .footer {
@@ -173,4 +219,22 @@ img {
 .item-list {
     margin-top: 40px;
     margin-bottom: 10px;
+}
+
+a.btn-custom {
+    font-family: khand;
+    color: white;
+}
+
+a.btn-attachment {
+    font-family: khand;
+    color: black;
+}
+
+.txt-overflow {
+    width: 150px;
+    overflow:hidden; 
+    white-space:nowrap; 
+    text-overflow: ellipsis;
+    color:black;
 }
