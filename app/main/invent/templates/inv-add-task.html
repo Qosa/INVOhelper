@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block mycontent %}
+<div class='col-header'>
+    <h2>Dodaj zadanie</h2>
+    <form method='POST' enctype="multipart/form-data">
+        {{ wtf.quick_form(form,button_map={'submit':'success'}) }}
+    </form>
+</div>
+{% endblock %}

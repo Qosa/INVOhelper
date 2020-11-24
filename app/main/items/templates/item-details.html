@@ -31,7 +31,15 @@
                             <h4>Indeks:</h3>
                         </div>
                         <div class="col col-item-data">
-                            {{ item.index_nbr }}
+                            <div class="row">
+                                <div class="col">
+                                    {{ item.index_nbr }}
+                                </div>
+                                <div class="col">
+                                    <a type="button" class="btn btn-info btn-custom">Kod QR</a>
+                                    <a type="button" class="btn btn-info btn-custom">Kod kreskowy</a>
+                                </div>                                
+                            </div>
                         </div>
                     </div>
                     <div class="row">

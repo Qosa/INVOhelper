@@ -3,6 +3,11 @@
 {% block mycontent %}
 <div class='col-header'>
     <h2>Dodaj przedmiot</h2>
-    {{ wtf.quick_form(form,button_map={'submit':'success'}) }}
+    <form action="" method="post">
+        <p>{{ form.name }}</p>
+        <p id="indexManual">{{ form.index_nbr }}</p>
+        <p>{{ form.description }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
 </div>
 {% endblock %}

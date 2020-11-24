@@ -69,16 +69,19 @@ class Comment(db.Model):
 class Schedule(db.Model):
     __tablename__ = 'schedule'
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, db.ForeignKey('stocktaking.id'))   
+    inv_id = db.Column(db.Integer, db.ForeignKey('stocktaking.id'))   
     date_start = db.Column(db.DateTime)
     date_end = db.Column(db.DateTime)
     task = db.Column(db.String())
+    finished = db.Column(db.Boolean(),create_constraint=False)
 
-    def __init__(self, item_id, date_start, date_end, task):
-        self.item_id = item_id
+    def __init__(self, id, inv_id, date_start, date_end, task):
+        self.id = id
+        self.inv_id = inv_id
         self.date_start = date_start
         self.date_end = date_end
         self.task = task
+        self.finished = False
 
 class Stocktaking(db.Model):
     __tablename__ = 'stocktaking'

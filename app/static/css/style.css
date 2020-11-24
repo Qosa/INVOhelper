@@ -210,9 +210,6 @@ h4 {
 }
 
 img {
-    margin-left: 225px;
-    width: 50%;
-    height: 80%;
     object-fit: fill;
   }
 
@@ -222,6 +219,11 @@ img {
 }
 
 a.btn-custom {
+    font-family: khand;
+    color: white;
+}
+
+.btn-custom {
     font-family: khand;
     color: white;
 }

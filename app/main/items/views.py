@@ -1,10 +1,15 @@
-import os
-from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort
+import os, glob, re
+from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort, send_file
 from werkzeug.utils import secure_filename
 from . import items, forms
 from app import app, db
 from app.models import Item, ItemList, Comment
-from ..comments.forms import CommentForm 
+from ..comments.forms import CommentForm
+from tempfile import NamedTemporaryFile
+from shutil import copyfileobj
+import qrcode
+from barcode import EAN13
+from barcode.writer import ImageWriter
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
 @items.route('/uploads/<filename>')
@@ -86,10 +91,53 @@ def add_occurrence(item_id):
 def occurrence_details(occur_id):
     form = CommentForm()
     occurrence = ItemList.query.get_or_404(occur_id)
+
+    #usuniecie plikow tymczasowych
+    for filename in glob.glob('C:/Python Projects/INVOhelper/app/static/img/temp_qr*.png'):
+        os.remove(filename)    
+
+    #tworzenie kodu QR
+    qr = qrcode.QRCode(
+            version=1,
+            box_size=10,
+            border=5)
+    qr.add_data(occurrence.inv_number)
+    qr.make(fit=True)
+    for filename in glob.glob('C:/Python Projects/INVOhelper/app/static/img/temp_qr*.png'):
+        os.remove(filename)
+    img = qr.make_image(fill='black', back_color='white')
+    pattern = re.compile('\W')
+    qrFileName = re.sub(re.compile('\W'),"-","qr_temp_" + occurrence.inv_number) + ".png"
+    img.save('C:/Python Projects/INVOhelper/app/static/img/' + qrFileName)
+    qrCode = '/static/img/' + qrFileName
+
+    #tworzenie kodu kreskowego EAN13
+    barCode = ''
+    if re.match(pattern="^\d{13}$", string=occurrence.inv_number): 
+        canEAN = 1
+        barCode = 'C:/Python Projects/INVOhelper/app/static/img/ean_temp_' + occurrence.inv_number + '.png'
+        ean = EAN13(occurrence.inv_number, writer=ImageWriter())
+        fullname = ean.save(barCode)
+        barCode = '/static/img/ean_temp_' + occurrence.inv_number + '.png'
+        """
+        with open(barCode, 'wb') as f:
+            ean = EAN13(occurrence.inv_number, writer=ImageWriter()).write(f)
+            fullname = ean.save(barCode)
+        """    
+    else:
+        canEAN = 0
+    """
+    tempFileObj = NamedTemporaryFile(mode='w+b',suffix='jpg')
+    pilImage = open('/tmp/myfile.jpg','rb')
+    copyfileobj(pilImage,tempFileObj)
+    pilImage.close()
+    remove('/tmp/myfile.jpg')
+    tempFileObj.seek(0,0)
+    """
     attachment = occurrence.documents
     comments = occurrence.comments.filter_by(deleted=0) \
             .order_by(Comment.edit_timestamp.desc())    
-    return render_template('occurrence-details.html', form=form, occurrence=occurrence, comments=comments)      
+    return render_template('occurrence-details.html', form=form, occurrence=occurrence, comments=comments, qrCode=qrCode, canEAN=canEAN, barCode=barCode)      
 
 @items.route('/occurrence/<int:occur_id>/edit/', methods=['GET', 'POST'])    
 def edit_occurrence(occur_id):

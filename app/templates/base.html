@@ -1,15 +1,8 @@
-{%- extends "bootstrap/base.html" -%}
+
 {%- from 'bootstrap/utils.html' import flashed_messages,icon -%}
 {%- block metas -%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 {%- endblock metas -%}
-{%- block title -%}
-    {%- if title -%}
-        {{ title }} - Item Library
-    {%- else -%}
-        Item Library
-    {%- endif -%}
-{%- endblock -%}
 {%- block styles -%}
     {#    {{ super() }}#}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -20,7 +13,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     {%- endblock -%}
-  {%- block body_attribs %} class="Site"{%- endblock -%}
+
 
     <!-- NAVBAR -->
     {% block navbar %}

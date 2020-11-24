@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, TextAreaField, FileField, SubmitField, FieldList, TextField
+from wtforms.fields.html5 import DateField
 
 class AddItemForm(FlaskForm):
     name = StringField('Nazwa', validators=[validators.DataRequired(message=u"Proszę wypełnić to pole!"),
@@ -25,4 +26,10 @@ class Sample2(FlaskForm):
     commissioner_surname = StringField(render_kw={"class":"form-control","placeholder": "Nazwisko"})
     localization = StringField(render_kw={"class":"form-control","placeholder": "Lokalizacja"})
     mpk_number = StringField(render_kw={"class":"form-control","placeholder": "Numer MPK"})
+    submit = SubmitField('Submit') 
+
+class AddTask(FlaskForm):
+    date_start = DateField('DatePicker', format='%Y-%m-%d')
+    date_end = DateField('DatePicker', format='%Y-%m-%d')
+    task = StringField(render_kw={"class":"form-control","placeholder": "Zadanie"})
     submit = SubmitField('Submit') 
