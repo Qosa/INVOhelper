@@ -27,7 +27,23 @@
             $("#stuButton").css('background-color', ' #f8f9fa').css('border', '1px solid gray');
             $("#stnButton").css('background-color', 'transparent').css('border', '0px solid black');
             $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
-        });        
+        }); 
+        $("#check-inv-number").click(function(){
+            var inv_number = $("#inv-nbr-finder").val();
+
+            $.ajax({
+                url: "details/invresponse",
+                type: "get",
+                data: {data: inv_number},
+                success: function(response) {
+                    $("#alert-holder").html(response);
+                },
+                error: function(xhr) {
+                    //Do Something to handle error
+                }
+                });
+        });
+
     });
 </script>
     <!-- CONTENT -->
@@ -49,7 +65,7 @@
             <hr/>
         </div>
 
-        <div class="item-info" style="height: 30%;">
+        <div class="item-info">
             <div class="row">
                 <div class="col">
                     <div class="row">
@@ -123,7 +139,7 @@
                             <h4>Harmonogram:</h3>
                         </div>
                         <div class="col col-item-data">
-
+                            <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_schedule', inv_id=stocktaking.id) }}">Harmonogram</a>
                         </div>
                     </div>                                                                                                    
                 </div>
@@ -138,7 +154,9 @@
                             <h4>Spis z natury:</h4>
                         </div>
                         <div class="col header-btn">
-                            <a type="button" class="btn btn-success btn-custom" href="">Dodaj</a>
+                            {%- if stocktaking.finished == false -%}
+                                <button type="button" class="btn btn-success btn-custom" data-toggle="modal" data-target="#myModal">Dodaj</a>
+                            {% endif %}        
                         </div>
                     </div>
                 </div>
@@ -249,5 +267,39 @@
 
             </div>
         </div>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Dodaj do spisu</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+
+                        </div>
+                        <div class="col-md-10">
+                            <form method="POST" action="">
+                                <div class="form-group">
+                                    <label>Numer inwentarzowy</label>
+                                    <input class="form-control" id="inv-nbr-finder" type="text" placeholder="Nr. inwentarzowy" required>
+                                </div>
+                                <button type="button" class="btn btn-success" id="check-inv-number">Wprowadź</button>
+                            </form>                            
+                        </div>
+                        <div class="col">
+                            
+                        </div>                                                
+                    </div>
+
+                        <hr />
+                        <div class="container" id="alert-holder">
+                        
+                        </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->  
     </div>
 {% endblock %}

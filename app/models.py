@@ -97,14 +97,12 @@ class Stocktaking(db.Model):
     date_start = db.Column(db.DateTime(),default=datetime.now())
     date_stop = db.Column(db.DateTime())
 
-    def __init__(self, localization, mpk_number, commissioner, com_members, evidenced, non_evidenced, unknown):
+    def __init__(self, id, localization, mpk_number, commissioner, com_members):
+        self.id = id
         self.localization = localization
         self.mpk_number = mpk_number
         self.commissioner = commissioner
         self.com_members = com_members
-        self.evidenced = evidenced
-        self.non_evidenced = non_evidenced
-        self.unknown = unknown
 
 class Unknown(db.Model):
     __tablename__ = 'unknown'
@@ -119,3 +117,11 @@ class Unknown(db.Model):
         self.inv_number = inv_number
         self.localization = localization
         self.description = description
+
+class Generator(db.Model):
+    __tablename__ = 'generator'
+    id = db.Column(db.Integer, primary_key=True)      
+    generated_value = db.Column(db.String())
+
+    def __init__(self, generated_value):
+        self.generated_value = generated_value

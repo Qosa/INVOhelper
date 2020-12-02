@@ -1,12 +1,37 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block mycontent %}
+<script>
+    $(document).ready(function() {
+        $("#invNbrGenerator").click(function() {
+            $('#index_nbr').val('{{ generated_value }}');
+            $("#invNbrGenerator").prop("disabled",true);
+        });
+    });
+</script>
 <div class='col-header'>
     <h2>Dodaj przedmiot</h2>
     <form action="" method="post">
-        <p>{{ form.name }}</p>
-        <p id="indexManual">{{ form.index_nbr }}</p>
-        <p>{{ form.description }}</p>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Nazwa</label>
+            <p>{{ form.name}}</p>
+        </div>        
+        <div class="form-group">
+            <label for="formGroupExampleInput">Nr. inwentarzowy</label>
+            <div class="row">
+                <div class="col">
+                    <p id="indexManual">{{ form.index_nbr }}</p>
+                </div>
+                <div class="col">
+                    <button type="button" id="invNbrGenerator" class="btn btn-success">Generuj</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Opis</label>
+            <p>{{ form.description }}</p>
+        </div>
+
         <p>{{ form.submit() }}</p>
     </form>
 </div>

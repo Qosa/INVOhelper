@@ -3,12 +3,12 @@ from flask import render_template, request, redirect, url_for, flash, send_from_
 from werkzeug.utils import secure_filename
 from . import items, forms
 from app import app, db
-from app.models import Item, ItemList, Comment
+from app.models import Item, ItemList, Comment, Generator
 from ..comments.forms import CommentForm
 from tempfile import NamedTemporaryFile
 from shutil import copyfileobj
 import qrcode
-from barcode import EAN13
+from barcode import Code128
 from barcode.writer import ImageWriter
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -28,17 +28,33 @@ def details(item_id):
     occurrences = ItemList.query.filter_by(item_id=item_id)
     return render_template('item-details.html', item=item, occurrences=occurrences)   
 
+def genetator():
+    initial_value = '1000010000000'
+    try:
+        last_value = Generator.query.order_by(Generator.id.desc()).first().generated_value
+        new_value = str(int(last_value[:6]) + 1) + '0000000'
+        generate = Generator(new_value)
+        return generate   
+    except:
+        generate = Generator(initial_value)
+        return generate
+
 @items.route('/add', methods=['GET', 'POST'] )
 def add():
     form = forms.AddItemForm(request.form)
-    if request.method == 'POST' and form.validate():
+    generated_value = genetator()
+    if request.method == 'POST':
         item = Item(form.name.data, form.index_nbr.data,
                     form.description.data)
-        db.session.add(item)
+        if form.index_nbr.data == generated_value.generated_value:
+            db.session.add(generated_value)
+            db.session.add(item)
+        else:
+            db.session.add(item)    
         db.session.commit()
         flash(u'Dodano pozycję!', 'success')
         return redirect(url_for('items.index'))
-    return render_template('add-item.html', form=form)
+    return render_template('add-item.html', form=form, generated_value=generated_value.generated_value)
 
 @items.route('/<int:item_id>/edit/', methods=['GET', 'POST'])    
 def edit(item_id):
@@ -68,6 +84,11 @@ def delete(item_id):
 @items.route('<int:item_id>/occurrence/add', methods=['GET', 'POST'])
 def add_occurrence(item_id):
     form = forms.AddOccurrenceForm()
+    item = Item.query.get_or_404(item_id)
+    if len(item.index_nbr) == 13 and item.index_nbr.isdigit():
+        generated_inv_number = int(item.index_nbr)+1
+    else:
+        generated_inv_number = 0    
     if request.method == 'POST' and form.validate():
         print(form.inv_number.data)
         print(form.localization.data)
@@ -85,7 +106,7 @@ def add_occurrence(item_id):
         db.session.commit()
         flash(u'Dodano wystąpienie przedmiotu!', 'success')
         return redirect(url_for('items.details',item_id=item_id))
-    return render_template('add-occurrence.html', form=form)   
+    return render_template('add-occurrence.html', form=form, generated_value=generated_inv_number)   
 
 @items.route('/occurence/<int:occur_id>/details')
 def occurrence_details(occur_id):
@@ -114,9 +135,10 @@ def occurrence_details(occur_id):
     #tworzenie kodu kreskowego EAN13
     barCode = ''
     if re.match(pattern="^\d{13}$", string=occurrence.inv_number): 
+        print(occurrence.inv_number)
         canEAN = 1
-        barCode = 'C:/Python Projects/INVOhelper/app/static/img/ean_temp_' + occurrence.inv_number + '.png'
-        ean = EAN13(occurrence.inv_number, writer=ImageWriter())
+        barCode = 'C:/Python Projects/INVOhelper/app/static/img/ean_temp_' + occurrence.inv_number
+        ean = Code128(occurrence.inv_number, writer=ImageWriter())
         fullname = ean.save(barCode)
         barCode = '/static/img/ean_temp_' + occurrence.inv_number + '.png'
         """

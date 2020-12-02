@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from flask import render_template, request, redirect, url_for, flash
 from . import invent
 from . import forms
@@ -8,12 +9,22 @@ from app.models import Stocktaking, ItemList, Unknown, Item, Schedule
 
 @invent.route('/creator', methods=['GET', 'POST'] )
 def creator():
-    form = forms.Creator(request.form)
-    if request.method == 'POST' and form.validate():
-        print(form.flist_members.data)   
-        flash(u'Dodano pozycję!', 'success')
-        return redirect(url_for('items.index'))
-    return render_template('inv-creator.html', form=form)   
+    lastIdSchedule = Schedule.query.order_by(Schedule.id.desc()).first().id
+    lastIdStocktaking = Stocktaking.query.order_by(Stocktaking.id.desc()).first().id
+    if request.method == 'POST':
+        print(request.form.getlist('memberName'))
+        """
+        members = []
+        for i in range(len(request.form.getlist('memberName'))):
+            members.append(request.form.getlist('memberName')[i]+" "+ request.form.getlist('memberSurname')[i])
+        stocktaking = Stocktaking(lastIdStocktaking+1,request.form.get('invLocalization'),request.form.get('invMpk'),members[0],members[1:])    
+        db.session.add(stocktaking)
+        for i in range(len(request.form.getlist('eventStartDate'))):
+            task = Schedule(lastIdSchedule+i+1,stocktaking.id,request.form.getlist('eventStartDate')[i],request.form.getlist('eventEndDate')[i],request.form.getlist('eventTask')[i])
+            db.session.add(task)
+        db.session.commit()    
+        """
+    return render_template('inv-creator.html')   
 
 @invent.route('/creator/test', methods=['GET', 'POST'] )
 def test():    
@@ -32,16 +43,40 @@ def inv_list():
 def inv_details(inv_id):         
     stocktaking = Stocktaking.query.get_or_404(inv_id)
     items_evidenced = []
-    for i in stocktaking.evidenced:
-        items_evidenced.append(ItemList.query.get_or_404(i))
-    items_nonevidenced = []
-    for i in ItemList.query:
-        items_nonevidenced.append(i.id)
+    items_nonevidenced = []    
+    try:
+        for i in stocktaking.evidenced:
+            items_evidenced.append(ItemList.query.get_or_404(i))        
+        for i in ItemList.query:
+            items_nonevidenced.append(i.id)
+    except:
+        pass        
     print(items_nonevidenced)    
     items_nonevidenced = list(set(items_nonevidenced) - set(items_evidenced))
     print(list(set(items_nonevidenced) - set(items_evidenced)))    
     items_unknown = Unknown.query.filter_by(inv_id=inv_id)
     return render_template('inv-details.html', stocktaking=stocktaking, items_evidenced=items_evidenced, items_nonevidenced=items_evidenced, items_unknown=items_unknown)
+
+@invent.route('/<int:inv_id>/details/invresponse', methods=['GET', 'POST'])
+def inv_response(inv_id):
+    inv_number = request.args.get('data')
+    if inv_number:
+        stocktaking = Stocktaking.query.get_or_404(inv_id)
+        item = ItemList.query.filter_by(inv_number=inv_number).first()
+        try:
+            print(item.id)
+            if item.id in stocktaking.evidenced:
+                inv_response = 2
+            else:
+                inv_response = 1  
+        except:
+            inv_response = 0
+
+        if request.method == 'POST':
+            stocktaking.evidenced = stocktaking.evidenced.append(item.id) 
+            db.session.add(stocktaking)
+            db.session.commit()   
+    return render_template('inv-response.html', inv_response=inv_response)            
 
 @invent.route('/<int:inv_id>/document', methods=['GET', 'POST'] )
 def inv_document(inv_id):   
@@ -91,7 +126,6 @@ def inv_schedule(inv_id):
     else:
         prev_month_data = monthrange(year-1,12)    
     month_data = monthrange(year,month)
-    print(tasks[0].date_start.month)
     return render_template('inv-schedule.html', 
                             inv_id=inv_id,
                             tasks=tasks,
@@ -159,3 +193,9 @@ def inv_task_delete(inv_id,task_id):
     db.session.commit()
     flash(u'Pomyślnie usunięto zadanie!', 'danger')
     return redirect(url_for('invent.inv_schedule', inv_id=inv_id))      
+
+@invent.route('/test/',methods=['GET', 'POST'])
+def inv_test():   
+    if request.method == 'POST':
+        print(request.form.getlist('exampleInputEmail1'))
+    return render_template('test.html')    

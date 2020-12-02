@@ -1,0 +1,25 @@
+{% if inv_response == 1 %}
+    <div class="alert alert-success" role="alert">
+        <div class="col">
+            <div class="row">
+                Przedmiot: . Czy dodać?
+            </div>
+            <div class="row">
+                <button class="btn btn-success btn-block">Dodaj</button>
+            </div>
+        </div>
+    </div>    
+{% elif inv_response == 2 %}
+    <div class="alert alert-warning" role="alert">Podany przedmiot został już spisany w tej inwentaryzacji!</div>
+{% else %}
+    <div class="alert alert-danger" role="alert">
+        <div class="col">
+            <div class="row">
+                Brak podanego numeru inwentarzowego w bazie! Czy dodać do spisu jako nieznany?
+            </div>
+            <div class="row">
+                <button class="btn btn-danger btn-block">Dodaj</button>
+            </div>
+        </div>
+    </div>
+{% endif %}

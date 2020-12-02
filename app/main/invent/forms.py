@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators, TextAreaField, FileField, SubmitField, FieldList, TextField
+from wtforms import StringField, validators, FormField, TextAreaField, FileField, SubmitField, FieldList, TextField
 from wtforms.fields.html5 import DateField
 
 class AddItemForm(FlaskForm):
@@ -11,6 +11,7 @@ class AddItemForm(FlaskForm):
     image = FileField('zdjecie')
     attachment = FileField('Załącznik')
     submit = SubmitField(u"Zatwierdź")
+
 
 class Creator(FlaskForm):
     commissioner_name = StringField(render_kw={"class":"form-control","placeholder": "Imię"})

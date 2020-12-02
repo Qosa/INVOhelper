@@ -11,13 +11,23 @@
     $("#itemsScanning").hide();
     $("#prevStep").hide();
     $("#addNewField").click(function() {
-        $('#addComMember').clone().find(':input').each(function (idx, ele) {
-        ele.name = ele.name + len;
+        len += 1;
+        clone = $('#addComMember').clone()
+
+        clone.find(':input').each(function (idx, ele) {
+        ele.name = ele.name;
         ele.id = ele.id + len;
         ele.value = '';
+
     }).end().find('.form-group').toggle(true).end()
-            .appendTo('#flist_members').slideDown('slow');
-            len += 1;    
+            .appendTo('#flist_members').slideDown('slow');   
+
+        clone.find('.surname').append('<div class="col-md-1"><button type="button" class="close" id="delMember">&times;</button></div>')
+
+        $("#flist_members").on('click', '.close', function(e) {
+            e.preventDefault();
+            $(this).parent().parent().parent().parent().parent().remove();
+            });             
         });
 
     $("#nextStep").click(function() {
@@ -38,7 +48,7 @@
             $("#scheduler").hide();
             nav += 1
         } else {
-            $("#nextStep").attr('href','{{ url_for("invent.inv_list") }}');
+            $("#nextStep").attr('type','submit');
         }
     });
 
@@ -68,8 +78,8 @@
 
     $("#addNextEvent").click(function() {
         $('#newEvent').clone().find(':input').each(function (idx, ele) {
-        ele.name = ele.name + len;
-        ele.id = ele.id + len;
+        ele.name = ele.name;
+        ele.id = ele.id;
         ele.value = '';
     }).end().find('.form-group').toggle(true).end()
             .appendTo('#flist_schedule').slideDown('slow');
@@ -153,20 +163,23 @@
                 <p style="color: green;">W tym oknie utworzysz listę członków komisji inwentaryzacyjnej</p>
                 <br/>
                 <h5>Przewodniczący komisji:</h5>
-                <form action="" method="post">
                     <div class="row" id="addComMember">
-                        <div class="col">
+                        <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput">Imię</label>
-                                        {{ form.commissioner_name }}
+                                        <input type="text" class="form-control" name="memberName" id="memberName" aria-describedby="emailHelp" placeholder="Imię" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput">Nazwisko</label>
-                                        {{ form.commissioner_surname }}
+                                        <div class="row surname">
+                                            <div class="col-md-11">
+                                                <input type="text" class="form-control" name="memberSurname" id="memberSurname" aria-describedby="emailHelp" placeholder="Nazwisko" required>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -178,8 +191,9 @@
                     <br/>
                     <h5>Członkowie:</h5>
                     <button type="button" class="btn btn-success btn-custom" id="addNewField">Dodaj</button> 
-                    {{ form.flist_members }}
-                </form>
+                    <div class="container" id="flist_members">
+
+                    </div>
             </div>
             <!-- HARMONOGRAM -->
             <div class="container" id="scheduler">
@@ -196,14 +210,14 @@
                 <p style="color: green;">Po dodaniu członków komisji oraz opracowaniu harmonogramu działań możesz rozpocząć spis z natury.</p>
                 <div class="row">
                     <div class="form-group">
-                        <label for="localizationInput">Lokalizacja:</label>
-                        {{ form.localization }}
+                        <label for="formGroupExampleInput">Imię</label>
+                        <input type="text" class="form-control" name="invLocalization" id="invLocalization" aria-describedby="emailHelp" placeholder="Lokalizacja" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label for="mpkInput">Numer MPK:</label>
-                        {{ form.mpk_number }}
+                        <label for="formGroupExampleInput">Imię</label>
+                        <input type="text" class="form-control" name="invMpk" id="invMpk" aria-describedby="emailHelp" placeholder="MPK" required>
                     </div>
                 </div>
             </div>
@@ -213,7 +227,7 @@
                 <a type="button" class="btn btn-success" id="prevStep"><i class="fas fa-chevron-left"></i> Poprzedni krok</a>
             </div>
             <div class="col-md-6" id="nav-2" style="display: inline-block; width: 100%; text-align: right;">
-                <a type="button" class="btn btn-success" id="nextStep">Następny krok <i class="fas fa-chevron-right"></i></a>   
+                <button type="button" class="btn btn-success" id="nextStep">Następny krok <i class="fas fa-chevron-right"></i></a>   
             </div>
         </div>
     </form>
@@ -236,23 +250,27 @@
 </div>
 
 <div class="container" id="eventsList">
-    <h5>Lista zadań:</h5>
-    <form action="" method="post">    
+    <h5>Lista zadań:</h5>  
         <div class="row" id="newEvent">
                 <div class='col-sm-6'>
                     <div class="form-group">
                         <div class='input-group date'>
-                            <input type="text" class="form-control" id="event-name" placeholder="Zadanie"/>
-                            <input type='date' class="form-control" id="event-date"/>
+                            <input type="text" class="form-control" name="eventTask" id="eventTask" placeholder="Zadanie" required/>
+                            <input type='date' class="form-control" name="eventStartDate" id="eventStartDate" required/>
                             <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                             </span>
+                            <input type='date' class="form-control" name="eventEndDate" id="eventEndDate" required/>
+                            <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                            </span>                            
                         </div>
                     </div>
                 </div>
-        </div>
-    </form>        
-    {{ form.flist_schedule }}
+        </div>       
+    <div class="container" id="flist_schedule">
+                        
+    </div>
     <div class="row">
         <div style="display: inline-block; width: 100%; text-align: center;">
             <button type="button" class="btn btn-success btn-custom" id="addNextEvent">Dodaj następne</button> 
