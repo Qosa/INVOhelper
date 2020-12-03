@@ -10,8 +10,8 @@ app.config.from_object('config')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app) 
 
-from app.main import admin, user, items, invent, comments
-for blueprint in [admin, user, items, invent, comments]:
+from app.main import admin, api, user, items, invent, comments
+for blueprint in [admin, api, user, items, invent, comments]:
     app.register_blueprint(blueprint)
 
 from app import models
