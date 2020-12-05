@@ -2,17 +2,18 @@ from . import api
 from collections.abc import Iterable
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from app import db
-from app.models import Stocktaking, ItemList, Unknown, Item, Schedule
+from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced
 
 @api.route('/item/<int:inv_id>/<inv_number>', methods=['GET'])
 def api_get_item(inv_id,inv_number):
-    stocktaking = Stocktaking.query.get_or_404(inv_id)
+    evidenced = Evidenced.query.filter_by(inv_id=inv_id)
     occurrence = ItemList.query.filter_by(inv_number=inv_number).first()
     item = Item.query.get_or_404(occurrence.item_id)
+    items_evidenced = []
+    for ev in evidenced:
+        items_evidenced.append(ev.item_id)
     try:
-        print(occurrence.id)
-        print(stocktaking.evidenced)
-        if occurrence.id in stocktaking.evidenced:
+        if occurrence.id in items_evidenced:
             inv_response = 2
         else:
             inv_response = 1  
@@ -21,3 +22,11 @@ def api_get_item(inv_id,inv_number):
     data = {'name':item.name, 'inv_response':inv_response}
     return jsonify({'data': data})
 
+@api.route('/item/<int:inv_id>/<inv_number>/add', methods=['GET'])
+def api_add_item(inv_id,inv_number):
+    occurrence = ItemList.query.filter_by(inv_number=inv_number).first()    
+    lastId = Evidenced.query.order_by(Evidenced.id.desc()).first().id
+    evidenced = Evidenced(lastId+1,inv_id,occurrence.id)
+    db.session.add(evidenced)
+    db.session.commit()
+    return jsonify({'data': 'success!'})

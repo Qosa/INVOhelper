@@ -90,9 +90,6 @@ class Stocktaking(db.Model):
     mpk_number = db.Column(db.Integer())
     commissioner = db.Column(db.String())
     com_members = db.Column(postgresql.ARRAY(db.String(), dimensions=1))
-    evidenced = db.Column(postgresql.ARRAY(db.Integer(), dimensions=1))
-    non_evidenced = db.Column(postgresql.ARRAY(db.Integer(), dimensions=1))
-    unknown = db.Column(postgresql.ARRAY(db.Integer(), dimensions=1))
     finished = db.Column(db.Boolean(),create_constraint=False)
     date_start = db.Column(db.DateTime(),default=datetime.now())
     date_stop = db.Column(db.DateTime())
@@ -103,6 +100,14 @@ class Stocktaking(db.Model):
         self.mpk_number = mpk_number
         self.commissioner = commissioner
         self.com_members = com_members
+
+class Generator(db.Model):
+    __tablename__ = 'generator'
+    id = db.Column(db.Integer, primary_key=True)      
+    generated_value = db.Column(db.String())
+
+    def __init__(self, generated_value):
+        self.generated_value = generated_value
 
 class Unknown(db.Model):
     __tablename__ = 'unknown'
@@ -118,10 +123,24 @@ class Unknown(db.Model):
         self.localization = localization
         self.description = description
 
-class Generator(db.Model):
-    __tablename__ = 'generator'
+class Evidenced(db.Model):
+    __tablename__ = 'evidenced'
     id = db.Column(db.Integer, primary_key=True)      
-    generated_value = db.Column(db.String())
+    inv_id = db.Column(db.Integer, db.ForeignKey('stocktaking.id'))
+    item_id = db.Column(db.Integer, db.ForeignKey('items_list.id'))
+    add_date = db.Column(db.DateTime(),default=datetime.now())
 
-    def __init__(self, generated_value):
-        self.generated_value = generated_value
+    def __init__(self, id, inv_id, item_id):
+        self.id = id
+        self.inv_id = inv_id
+        self.item_id = item_id      
+
+class NonEvidenced(db.Model):
+    __tablename__ = 'nonevidenced'
+    id = db.Column(db.Integer, primary_key=True)      
+    inv_id = db.Column(db.Integer, db.ForeignKey('stocktaking.id'))
+    item_id = db.Column(db.Integer, db.ForeignKey('items_list.id'))
+
+    def __init__(self, inv_id, item_id):
+        self.inv_id = inv_id
+        self.item_id = item_id             

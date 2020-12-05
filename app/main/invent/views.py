@@ -5,7 +5,7 @@ from . import forms
 from app import db
 import datetime
 from calendar import monthrange
-from app.models import Stocktaking, ItemList, Unknown, Item, Schedule
+from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced, NonEvidenced
 
 @invent.route('/creator', methods=['GET', 'POST'] )
 def creator():
@@ -42,20 +42,29 @@ def inv_list():
 @invent.route('/<int:inv_id>/details', methods=['GET', 'POST'] )
 def inv_details(inv_id):         
     stocktaking = Stocktaking.query.get_or_404(inv_id)
+    evidenced = Evidenced.query.filter_by(inv_id=inv_id)
     items_evidenced = []
-    items_nonevidenced = []    
-    try:
-        for i in stocktaking.evidenced:
-            items_evidenced.append(ItemList.query.get_or_404(i))        
-        for i in ItemList.query:
-            items_nonevidenced.append(i.id)
-    except:
-        pass        
-    print(items_nonevidenced)    
-    items_nonevidenced = list(set(items_nonevidenced) - set(items_evidenced))
-    print(list(set(items_nonevidenced) - set(items_evidenced)))    
+    item_ids_evidenced = []
+    items_nonevidenced = []
+    for item in evidenced:
+        items_evidenced.append(ItemList.query.get_or_404(item.item_id))
+    if stocktaking.finished == True:
+        items = ItemList.query
+        print("zakonczona")
+        try:
+            for item in items_evidenced:
+                item_ids_evidenced.append(item.id)
+            for item in items:
+                if item.id in item_ids_evidenced:
+                    pass
+                else:
+                    items_nonevidenced.append(item)
+        except:
+            pass        
+    print(items_evidenced)
+    print(items_nonevidenced)       
     items_unknown = Unknown.query.filter_by(inv_id=inv_id)
-    return render_template('inv-details.html', stocktaking=stocktaking, items_evidenced=items_evidenced, items_nonevidenced=items_evidenced, items_unknown=items_unknown)
+    return render_template('inv-details.html', stocktaking=stocktaking, items_evidenced=items_evidenced, items_nonevidenced=items_nonevidenced, items_unknown=items_unknown)
 
 @invent.route('/<int:inv_id>/details/invresponse', methods=['GET', 'POST'])
 def inv_response(inv_id):
