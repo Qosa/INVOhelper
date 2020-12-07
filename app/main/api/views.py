@@ -4,7 +4,7 @@ from flask import render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced
 
-@api.route('/item/<int:inv_id>/<inv_number>', methods=['GET'])
+@api.route('/item/get/<int:inv_id>/<inv_number>', methods=['GET'])
 def api_get_item(inv_id,inv_number):
     evidenced = Evidenced.query.filter_by(inv_id=inv_id)
     occurrence = ItemList.query.filter_by(inv_number=inv_number).first()
