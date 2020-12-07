@@ -22,11 +22,12 @@ def api_get_item(inv_id,inv_number):
     data = {'name':item.name, 'inv_response':inv_response}
     return jsonify({'data': data})
 
-@api.route('/item/<int:inv_id>/<inv_number>/add', methods=['GET'])
+@api.route('/item/add/<int:inv_id>/<inv_number>', methods=['GET'])
 def api_add_item(inv_id,inv_number):
     occurrence = ItemList.query.filter_by(inv_number=inv_number).first()    
     lastId = Evidenced.query.order_by(Evidenced.id.desc()).first().id
     evidenced = Evidenced(lastId+1,inv_id,occurrence.id)
     db.session.add(evidenced)
     db.session.commit()
-    return jsonify({'data': 'success!'})
+    data = {'name':inv_number, 'inv_response':1}
+    return jsonify({'data':data})
