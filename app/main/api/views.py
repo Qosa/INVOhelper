@@ -37,7 +37,7 @@ def api_add_item(inv_id,inv_number):
 def api_add_item():
     if request.method == 'POST':
         print('kokoko!')
-        data = {'inv_response':1}
+        data = {'inv_id':1,'inv_item_number':'1000010000006','comment':'jakies gowno','inv_response':1}
     else:
         print('Nic z tego!!')
         data = {'inv_response':0}
