@@ -36,7 +36,7 @@ def api_add_item(inv_id,inv_number):
 @api.route('/item/post/add', methods=['GET', 'POST'])
 def api_add_item():
     if request.method == 'POST':
-        print(request.data)
+        print(request.data["comment"])
         print('kokoko!')
         data = {'inv_id':1,'inv_item_number':'1000010000006','comment':'jakies gowno','inv_response':1}
     else:
