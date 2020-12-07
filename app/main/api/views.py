@@ -36,12 +36,18 @@ def api_add_item(inv_id,inv_number):
 @api.route('/item/post/add', methods=['GET', 'POST'])
 def api_add_item():
     if request.method == 'POST':
-        print(request.get_json()["comment"])
-        print('kokoko!')
-        data = {'inv_id':1,'inv_item_number':'1000010000006','comment':'jakies gowno','inv_response':1}
+        postData = request.get_json()
+        inv_number = postData["item_inv_number"]
+        inv_id = postData["inv_id"]
+        occurrence = ItemList.query.filter_by(inv_number=inv_number).first()    
+        lastId = Evidenced.query.order_by(Evidenced.id.desc()).first().id
+        evidenced = Evidenced(lastId+1,inv_id,occurrence.id)
+        db.session.add(evidenced)
+        db.session.commit()
+        data = {'inv_id':inv_id,'inv_item_number':inv_number,'comment':'jakies gowno','inv_response':1}
     else:
         print('Nic z tego!!')
-        data = {'inv_response':0}
+        data = {'inv_id':1,'inv_item_number':'1000010000006','comment':'jakies gowno','inv_response':0}
     '''    
     occurrence = ItemList.query.filter_by(inv_number=inv_number).first()    
     lastId = Evidenced.query.order_by(Evidenced.id.desc()).first().id
