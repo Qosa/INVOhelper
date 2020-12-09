@@ -58,12 +58,13 @@ class Comment(db.Model):
     edit_timestamp = db.Column(db.DateTime, default=datetime.now())
     deleted = db.Column(db.Integer, default=0)
 
-    def __init__(self, occur_id, comment):
+    def __init__(self, id, occur_id, comment):
         #self.user = user
+        self.id = id
         self.item_id = occur_id
         self.comment = comment
         self.create_timestamp = datetime.now()
-        self.edit_timestamp = self.create_timestamp
+        self.edit_timestamp = datetime.now()
         self.deleted = 0
 
 class Schedule(db.Model):
