@@ -44,8 +44,8 @@ def api_add_item():
             pass
         else:
             commentAdd = Comment(lastIdComment+1,occurrence.id,comment)
+            db.session.add(commentAdd)
         db.session.add(evidenced)
-        db.session.add(comment)
         db.session.commit()
         data = {'inv_id':inv_id,'inv_item_number':inv_number,'comment':comment,'inv_response':1}
     else:
