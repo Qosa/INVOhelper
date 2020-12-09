@@ -14,18 +14,18 @@ def api_get_item(inv_id,inv_number):
         for ev in evidenced:
             items_evidenced.append(ev.item_id)
         if occurrence.id in items_evidenced:
-            inv_response = 3
+            inv_response = 2
         else:
-            inv_response = 2  
+            inv_response = 1  
         data = {'name':item.name, 'inv_response':inv_response}
     except:
         try:
             unknown = Unknown.query.filter_by(inv_number=inv_number,inv_id=inv_id).first()
-            inv_response = 1    
-            data = {'name':'unknown', 'inv_response':inv_response}
+            inv_response = 2    
+            data = {'name':'NIEZNANY', 'inv_response':inv_response}
         except:
             inv_response = 0    
-            data = {'name':'unknown', 'inv_response':inv_response}    
+            data = {'name':'NIEZNANY', 'inv_response':inv_response}    
     return jsonify({'data': data})
 
 @api.route('/item/post/add', methods=['GET', 'POST'])
