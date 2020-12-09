@@ -35,6 +35,11 @@ def api_add_item():
         postData = request.get_json()
         inv_number = postData["item_inv_number"]
         inv_id = postData["inv_id"]
+        comment = postData["comment"]
+        if comment == "":
+            print("pusto!")
+        else:
+            print("Komentarz "+comment)    
         occurrence = ItemList.query.filter_by(inv_number=inv_number).first()    
         lastId = Evidenced.query.order_by(Evidenced.id.desc()).first().id
         evidenced = Evidenced(lastId+1,inv_id,occurrence.id)
