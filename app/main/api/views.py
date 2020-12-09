@@ -21,7 +21,7 @@ def api_get_item(inv_id,inv_number):
     except:
         try:
             unknown = Unknown.query.filter_by(inv_number=inv_number,inv_id=inv_id).first()
-            print(unknown)
+            print(unknown.inv_number)
             inv_response = 2    
             data = {'name':'NIEZNANY', 'inv_response':inv_response}
         except:
