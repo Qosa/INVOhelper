@@ -1,7 +1,6 @@
 import os, glob, re
 from pathlib import Path
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort, send_file
-from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
 from . import items, forms
 from app import app, db, docs
