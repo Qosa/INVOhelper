@@ -3,7 +3,7 @@ from pathlib import Path
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort, send_file
 from werkzeug.utils import secure_filename
 from . import items, forms
-from app import app, db, docs
+from app import app, db
 from app.models import Item, ItemList, Comment, Generator
 from ..comments.forms import CommentForm
 from tempfile import NamedTemporaryFile
@@ -100,9 +100,6 @@ def add_occurrence(item_id):
                 abort(400)
             Path(app.config['UPLOADED_PHOTOS_DEST']+form.inv_number.data).mkdir()
             form.img.data.save(app.config['UPLOADED_PHOTOS_DEST']+form.inv_number.data+'/'+filename_img)
-            #path = 'photos/' + form.inv_number.data
-            #photos = UploadSet(path, IMAGES)
-            #photos.save(form.img.data)
         if filename_doc != "":
             file_ext = os.path.splitext(filename_doc)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS_DOCS']:
