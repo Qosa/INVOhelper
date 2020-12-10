@@ -119,7 +119,9 @@ class Unknown(db.Model):
     add_date = db.Column(db.DateTime(),default=datetime.now())
     description = db.Column(db.String())
 
-    def __init__(self, inv_number, localization, description):
+    def __init__(self, id, inv_id, inv_number, localization, description):
+        self.id = id
+        self.inv_id = inv_id
         self.inv_number = inv_number
         self.localization = localization
         self.description = description

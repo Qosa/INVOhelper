@@ -50,6 +50,25 @@ def api_add_item():
         data = {'inv_id':inv_id,'inv_item_number':inv_number,'comment':comment,'inv_response':1}
     else:
         print('Nic z tego!!')
-        data = {'inv_id':inv_id,'inv_item_number':inv_number,'comment':'jakies gowno','inv_response':0}
+        data = {'inv_id':inv_id,'inv_item_number':inv_number,'comment':comment,'inv_response':0}
 
     return jsonify({'data':data})
+
+@api.route('/item/post/add_unknown', methods=['GET', 'POST'])
+def api_add_unknown():
+    if request.method == 'POST':
+        postData = request.get_json()
+        inv_number = postData["inv_number"]
+        inv_id = postData["inv_id"]
+        localization = postData["localization"]
+        description = postData["description"]
+        lastIdUnknown = Unknown.query.order_by(Unknown.id.desc()).first().id
+        unknown = Unknown(lastIdUnknown+1,inv_id,inv_number,localization,description)
+        db.session.add(unknown)
+        db.session.commit()        
+        data = {'inv_id':inv_id,'inv_number':inv_number,'description':description,'localization':localization, 'inv_response':1}
+    else:
+        data = {'inv_id':inv_id,'inv_number':inv_number,'description':description,'localization':localization, 'inv_response':0}   
+
+    return jsonify({'data':data})     
+
