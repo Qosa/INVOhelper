@@ -5,9 +5,17 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 MAX_CONTENT_LENGTH = 1024 * 1024
 
-UPLOAD_EXTENSIONS = ['.pdf', '.PDF']
+UPLOAD_EXTENSIONS_DOCS = ['.pdf', '.PDF']
 
-UPLOAD_PATH = 'uploads'
+UPLOAD_EXTENSIONS_PHOTOS = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG']
+
+UPLOADS_DEFAULT_DEST = os.path.join(basedir, 'app/static')
+
+TEMP_CODES_DEST = os.path.join(basedir, 'app/static/temp/')
+
+UPLOADED_PHOTOS_DEST = os.path.join(basedir, 'app/static/photos/')
+
+UPLOADED_DOCS_DEST = os.path.join(basedir, 'app/static/docs/')
 
 TEMPLATES_AUTO_RELOAD = True
 

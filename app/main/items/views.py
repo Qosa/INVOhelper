@@ -1,8 +1,10 @@
 import os, glob, re
+from pathlib import Path
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort, send_file
+from flask_uploads import UploadSet, IMAGES, configure_uploads
 from werkzeug.utils import secure_filename
 from . import items, forms
-from app import app, db
+from app import app, db, docs
 from app.models import Item, ItemList, Comment, Generator
 from ..comments.forms import CommentForm
 from tempfile import NamedTemporaryFile
@@ -85,21 +87,29 @@ def delete(item_id):
 def add_occurrence(item_id):
     form = forms.AddOccurrenceForm()
     item = Item.query.get_or_404(item_id)
+    print(app.config['TEMP_CODES_DEST'])
     if len(item.index_nbr) == 13 and item.index_nbr.isdigit():
         generated_inv_number = int(item.index_nbr)+1
     else:
         generated_inv_number = 0    
-    if request.method == 'POST' and form.validate():
-        print(form.inv_number.data)
-        print(form.localization.data)
-        print(form.documents.data)
-        uploaded_file = form.documents.data
-        filename = secure_filename(form.documents.data.filename)
-        if filename != '':
-            file_ext = os.path.splitext(filename)[1]
-            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+    if request.method == 'POST' and form.validate_on_submit():
+        filename_img = secure_filename(form.img.data.filename)
+        filename_doc = secure_filename(form.documents.data.filename)
+        if filename_img != "":
+            file_ext = os.path.splitext(filename_img)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS_PHOTOS']:
                 abort(400)
-            uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+            Path(app.config['UPLOADED_PHOTOS_DEST']+form.inv_number.data).mkdir()
+            form.img.data.save(app.config['UPLOADED_PHOTOS_DEST']+form.inv_number.data+'/'+filename_img)
+            #path = 'photos/' + form.inv_number.data
+            #photos = UploadSet(path, IMAGES)
+            #photos.save(form.img.data)
+        if filename_doc != "":
+            file_ext = os.path.splitext(filename_doc)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS_DOCS']:
+                abort(400)
+            Path(app.config['UPLOADED_DOCS_DEST']+form.inv_number.data).mkdir()
+            form.documents.data.save(app.config['UPLOADED_DOCS_DEST']+form.inv_number.data+'/'+filename_doc)
         occurrence = ItemList(item_id, form.inv_number.data, form.localization.data,
                     form.img.data.filename, form.documents.data.filename)
         db.session.add(occurrence)
@@ -114,7 +124,7 @@ def occurrence_details(occur_id):
     occurrence = ItemList.query.get_or_404(occur_id)
 
     #usuniecie plikow tymczasowych
-    for filename in glob.glob('C:/Python Projects/INVOhelper/app/static/img/temp_qr*.png'):
+    for filename in glob.glob(app.config['TEMP_CODES_DEST']+'temp_*.png'):
         os.remove(filename)    
 
     #tworzenie kodu QR
@@ -124,23 +134,23 @@ def occurrence_details(occur_id):
             border=5)
     qr.add_data(occurrence.inv_number)
     qr.make(fit=True)
-    for filename in glob.glob('C:/Python Projects/INVOhelper/app/static/img/temp_qr*.png'):
+    for filename in glob.glob(app.config['TEMP_CODES_DEST']+'qr_temp*.png'):
         os.remove(filename)
     img = qr.make_image(fill='black', back_color='white')
     pattern = re.compile('\W')
-    qrFileName = re.sub(re.compile('\W'),"-","qr_temp_" + occurrence.inv_number) + ".png"
-    img.save('C:/Python Projects/INVOhelper/app/static/img/' + qrFileName)
-    qrCode = '/static/img/' + qrFileName
+    qrFileName = re.sub(re.compile('\W'),"-","temp_qr" + occurrence.inv_number) + ".png"
+    img.save(app.config['TEMP_CODES_DEST'] + qrFileName)
+    qrCode = '/static/temp/' + qrFileName
 
     #tworzenie kodu kreskowego EAN13
     barCode = ''
     if re.match(pattern="^\d{13}$", string=occurrence.inv_number): 
         print(occurrence.inv_number)
         canEAN = 1
-        barCode = 'C:/Python Projects/INVOhelper/app/static/img/ean_temp_' + occurrence.inv_number
+        barCodeFileName = re.sub(re.compile('\W'),"-","temp_ean" + occurrence.inv_number)
         ean = Code128(occurrence.inv_number, writer=ImageWriter())
-        fullname = ean.save(barCode)
-        barCode = '/static/img/ean_temp_' + occurrence.inv_number + '.png'
+        ean.save(app.config['TEMP_CODES_DEST'] + barCodeFileName)
+        barCode = '/static/temp/' + barCodeFileName + ".png"
         """
         with open(barCode, 'wb') as f:
             ean = EAN13(occurrence.inv_number, writer=ImageWriter()).write(f)
@@ -186,10 +196,10 @@ def delete_occurrence(occur_id):
     flash(u'Pomyślnie usunięto pozycję!', 'danger')
     return redirect(url_for('items.details', item_id=item_id, occurrences=occurrences))        
 
-@items.route('occurrence/download/<filename>/', methods=['GET', 'POST'])
-def download_occurrence_attachment(filename):
-    uploads = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_from_directory(directory=uploads,
+@items.route('occurrence/download/<inv_number>/<filename>/', methods=['GET', 'POST'])
+def download_occurrence_attachment(inv_number,filename):
+    docs = os.path.join(app.root_path, app.config['UPLOADED_DOCS_DEST']+inv_number)
+    return send_from_directory(directory=docs,
                                filename=filename)
 
 @items.route('calendar/')

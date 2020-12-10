@@ -106,7 +106,7 @@
                             <div class="col-md-3">
                                 <div class="row">
                                     <div style="display: inline-block; width: 100%; text-align: center;">
-                                        <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',filename=occurrence.documents) }}">
+                                        <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',inv_number=occurrence.inv_number,filename=occurrence.documents) }}">
                                             <i class="far fa-file-alt fa-5x"></i> 
                                         </a>
                                     </div>

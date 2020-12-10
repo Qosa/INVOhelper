@@ -12,6 +12,6 @@ class AddItemForm(FlaskForm):
 class AddOccurrenceForm(FlaskForm):
     inv_number = StringField('Indeks',render_kw={"class":"form-control","placeholder": "Nr. inwentarzowy"})
     localization = StringField('Lokalizacja',render_kw={"class":"form-control","placeholder": "Lokalizacja"})
-    img = FileField('Zdjecie')
+    img = FileField('Zdjecie',id="photo")
     documents = FileField('Załącznik')    
     submit = SubmitField(u"Zatwierdź",render_kw={"class":"btn btn-success"})
