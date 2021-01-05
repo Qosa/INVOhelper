@@ -1,10 +1,40 @@
 from . import api
+from ..decorators import token_required
 from collections.abc import Iterable
-from flask import render_template, request, redirect, url_for, flash, jsonify
-from app import db
-from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced, Comment
+import datetime
+from flask import render_template, request, redirect, url_for, flash, jsonify, make_response
+import jwt
+from werkzeug.security import check_password_hash
+from app import app, db
+from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced, Comment, User, TokenBlacklist
+
+@api.route('/login', methods=['GET', 'POST'])  
+def api_login_user(): 
+ 
+    auth = request.authorization   
+
+    if not auth or not auth.username or not auth.password:  
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})    
+
+    user = User.query.filter_by(login=auth.username).first()   
+     
+    if check_password_hash(user.password_hash, auth.password):  
+        token = jwt.encode({'public_id': user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])  
+        return jsonify({'token' : token.decode('UTF-8')}) 
+
+    return make_response('could not verify',  401, {'WWW.Authentication': 'Basic realm: "login required"'})
+
+@api.route('/logout', methods=['GET', 'POST'])  
+@token_required
+def api_logout_user(): 
+    token = request.headers['x-access-tokens']
+    db.session.add(TokenBlacklist(token=token))
+    db.session.commit()
+    data = { 'response':'token blacklisted!' }
+    return jsonify({'data': data})
 
 @api.route('/item/get/<int:inv_id>/<inv_number>', methods=['GET'])
+@token_required
 def api_get_item(inv_id,inv_number):
     try:
         evidenced = Evidenced.query.filter_by(inv_id=inv_id)
@@ -30,6 +60,7 @@ def api_get_item(inv_id,inv_number):
     return jsonify({'data': data})
 
 @api.route('/item/post/add', methods=['GET', 'POST'])
+@token_required
 def api_add_item():
     if request.method == 'POST':
         postData = request.get_json()
@@ -55,6 +86,7 @@ def api_add_item():
     return jsonify({'data':data})
 
 @api.route('/item/post/add_unknown', methods=['GET', 'POST'])
+@token_required
 def api_add_unknown():
     if request.method == 'POST':
         postData = request.get_json()

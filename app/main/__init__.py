@@ -1,7 +1,11 @@
 # -*- coding:utf-8 -*-
-#from app.models import User
+from app import lm
+from app.models import User
 
-from .admin import admin
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 from .user import user
 from .items import items
 from .invent import invent

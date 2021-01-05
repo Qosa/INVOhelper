@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% block mycontent %}
+    <script>
+    function confirmDelete(item_id) {
+        var link = item_id + '/delete';
+        var prompt = confirm("Czy jesteś pewien?");
+        if(prompt == true){
+            window.location.href = link;
+        } else {}
+    }
+    </script>
     <!-- CONTENT -->
     <div class="container">
         <div class="content-header">
@@ -25,14 +34,14 @@
             <tbody>
                     {% for item in items %}
                     <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                        <td><a href="#">{{ item.id }}</a>
+                        <td><a id="" href="#">{{ item.id }}</a>
                         <td class="hidden-xs">{{ item.name}}</td>
                         <td class="hidden-xs">{{ item.inv_number}}</td>
                         <td class="hidden-xs">{{ item.description}}</td>
                         <td>
-                            <a type="button" class="btn btn-success btn-custom" href="{{ url_for('items.details',item_id=item.id) }}">Podgląd</a>
+                            <a type="button" class="btn btn-success btn-custom"  href="{{ url_for('items.details',item_id=item.id) }}">Podgląd</a>
                             <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit',item_id=item.id) }}">Edytuj</a>
-                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete',item_id=item.id,next=request.full_path) }}">Usuń</a>
+                            <a type="button" class="btn btn-danger btn-custom" onclick="confirmDelete('{{item.id}}')">Usuń</a>
                         </td>
                     </tr>
                     {% endfor %}                 

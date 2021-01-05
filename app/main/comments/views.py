@@ -10,9 +10,9 @@ from .forms import CommentForm
 def add(occur_id):
     form = CommentForm()
     occurrence = ItemList.query.get_or_404(occur_id)
-
+    lastId = Comment.query.order_by(Comment.id.desc()).first().id
     if form.validate_on_submit():
-        the_comment = Comment(occur_id=occur_id, comment=form.comment.data)
+        the_comment = Comment(id=lastId+1,occur_id=occur_id, comment=form.comment.data)
         db.session.add(the_comment)
         db.session.commit()
         flash(u'Komentarz został opublikowany', 'success')

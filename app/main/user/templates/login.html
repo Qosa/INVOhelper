@@ -1,46 +1,47 @@
 <head>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../../../static/css/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
 </head>
-<body style="background-image: url('../static/img/login-bcg.png');">
-<div class="container" style="height: 60%; width: 50%; border: 1px solid gray; margin-top: 125px; background-color: white;">
-    <div class="row col-header" style="height: 30%; text-align: center;">
-        <span class="invohelper_logo" style="margin-left: 200px; margin-top: 20px;" href="#">INV<span style="color: green;">O</span>helper</span>
-        <hr/>
-    </div>
-    <div class="row" style="height: 70%;">
-        <div class="col">
-        <div class="row">
-            <div class="col item-list-header" style="margin-left: 90px;">
-                <h3>Logowanie</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col col-4 item-list-header" style="text-align: center;">
-                login
-            </div>
-            <div class="col col-6" style="width: 70%;">
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="login lub email">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col col-4 item-list-header" style="text-align: center;">
-                hasło
-            </div>
-            <div class="col col-6">
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="hasło" style="margin-right: 50px;">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col item-list-header" style="margin-top: 30px; text-align: center;">
-                <button class="btn btn-success" onclick="location.href='adminpanel.html'" type="button">Zaloguj</button>
-            </div>
-        </div>  
-    </div>              
-    </div>
-</div>
+<body>
+                <div class="container">
+                    <form method="POST" class="form">  
+                        {{ form.hidden_tag() }}   
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="formGroupExampleInput">Login</label>
+                                </div>
+                                <div class="col">
+                                    <p>{{ form.login }}</p>                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="formGroupExampleInput">Hasło</label>
+                                </div>
+                                <div class="col">
+                                    <p>{{ form.password }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="formGroupExampleInput">Zapamiętaj mnie</label>
+                                </div>
+                                <div class="col">
+                                    <p>{{ form.remember_me }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p>{{ form.submit() }}</p>
+                    </form>    
+                </div>              
+    
 </body>    

@@ -45,8 +45,8 @@
                         <b>SKŁAD KOMISJI</b>
                     </div>
                     <div class="col">
-                        {% for members in stocktaking.com_members %}
-                            {{ member }}
+                        {% for member in stocktaking.com_members %}
+                            {{ member }}<br/>
                         {% endfor %}  
                     </div>                    
                 </div>                                                              
@@ -54,6 +54,16 @@
         </div>
         <div class="row" style="border: 1px solid black;">
             <div class="col">
+                <div style="text-align: center;">
+                    <br/>
+                    {% if doc_type == 'evidenced' %}
+                    <p><b>Spisane przedmioty</b></p>
+                    {% elif doc_type == 'nonevidenced' %}
+                    <p><b>Różnice względem zadeklarowanego stanu</b></p>
+                    {% elif doc_type == 'unknown' %}
+                    <p><b>Nieznane przedmioty spisane podczas inwentaryzacji</b></p>
+                    {% endif %}
+                </div>
                 <div id="stocktakingsPending">
                     <table class="table">
                         <thead class="thead">
@@ -72,12 +82,26 @@
                                     <td class="hidden-xs">{{ item.item_id }}</td>
                                     <td class="hidden-xs">{{ item.localization}}</td>
                                 </tr>
-                                {% endfor %}                                 
+                                {% endfor %}                                    
                         </tbody>
                     </table>
+                    {% if doc_type != 'nonevidenced' %}
+                        {% if items.first() == None %}
+                        <div class="container" style="text-align: center;">
+                            <p>Brak spisanych przedmiotów dla tej inwentaryzacji</p>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        {% if not items %}
+                        <div class="container" style="text-align: center;">
+                            <p>Brak spisanych przedmiotów dla tej inwentaryzacji</p>
+                        </div>
+                        {% endif %}   
+                    {% endif %}                         
                 </div>
             </div>
         </div>
+          
         <div class="row" style="margin-bottom: 50px;">
             <div class="col" style="border: 1px solid black; padding-bottom: 100px;">
                 Komentarz

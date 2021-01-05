@@ -1,10 +1,49 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block mycontent %}
+<script>
+    $(document).ready(function() {
+        $("#onetimer").change(function() {
+            if($("#onetimer").is(":checked")){
+                console.log('kokoko');
+                $("#date_exp_end").prop("disabled", true);
+            } else {
+                console.log('kokokon');
+                $("#date_exp_end").prop("disabled", false);
+            }
+        });
+
+        $("#date_start").on("change paste keyup", function() {
+            var ds_value = $("#date_start").val();
+            $("#date_exp_end").attr("min",ds_value);
+        });
+
+        if($("#date_start").val()){
+            var ds_value = $("#date_start").val();
+            $("#date_exp_end").attr("min",ds_value);            
+        }
+    });    
+</script>
 <div class='col-header'>
     <h2>Dodaj zadanie</h2>
     <form method='POST' enctype="multipart/form-data">
-        {{ wtf.quick_form(form,button_map={'submit':'success'}) }}
+        <div class="form-group">
+            <label for="formGroupExampleInput">Data rozpoczęcia</label>
+            <p>{{ form.date_start }}</p>
+            {{ form.onetimer }}
+            <label>Wydarzenie jednorazowe</label>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Data zakończenia</label>
+            <p>{{ form.date_exp_end }}</p>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Zadanie</label>
+            <p>{{ form.task }}</p>
+        </div>
+        <div class="form-group">
+            <p>{{ form.submit }}</p>
+        </div>
     </form>
 </div>
 {% endblock %}

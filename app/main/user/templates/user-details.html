@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block mycontent %}
+<div class='col-header'>
+    <h2>O użytkowniku</h2>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col">
+                Login:
+            </div>
+            <div class="col">
+                {{ current_user.login }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Typ konta:
+            </div>
+            <div class="col">
+                {{ role }}
+            </div>            
+        </div>
+        {% if current_user.role != 1 %}
+        <div class="row">
+            <div class="col">
+                Inwentaryzacje:
+            </div>
+            <div class="col">
+                {% if current_user.stocktakings != None %}
+                    {{ current_user.stocktakings }}
+                {% else %}
+                    BRAK PRZYDZIELONYCH
+                {% endif %}        
+            </div>            
+        </div>
+        {% endif %}
+    </div>
+    <br />
+    <h2>Zmień hasło</h2>
+    <form method="POST">
+        {{ form.csrf_token }} 
+        <div class="form-group">
+            <label for="formGroupExampleInput">Stare hasło</label>
+            <p>{{ form.old_password }}</p>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Nowe hasło</label>
+            <p>{{ form.new_password }}</p>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Powtórz hasło:</label>
+            <p>{{ form.confirm_password }}</p>
+        </div>
+        <p>{{ form.submit() }}</p>
+    </form>
+</div>
+{% endblock %}

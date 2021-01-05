@@ -4,6 +4,7 @@
     $(document).ready(function() {
         $("#stocktakingsNonevidenced").hide();
         $("#stocktakingsUnknown").hide();
+
         $("#stNonevidenced").click(function() {
             $("#stocktakingsEvidenced").hide();
             $("#stocktakingsUnknown").hide();
@@ -12,6 +13,7 @@
             $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
             $("#stuButton").css('background-color', 'transparent').css('border', '0px solid black');
         });
+
         $("#stEvidenced").click(function() {
             $("#stocktakingsEvidenced").show();
             $("#stocktakingsUnknown").hide();
@@ -20,6 +22,7 @@
             $("#stnButton").css('background-color', 'transparent').css('border', '0px solid black');
             $("#stuButton").css('background-color', 'transparent').css('border', '0px solid black');
         });
+
         $("#stUnknown").click(function() {
             $("#stocktakingsEvidenced").hide();
             $("#stocktakingsUnknown").show();
@@ -28,6 +31,7 @@
             $("#stnButton").css('background-color', 'transparent').css('border', '0px solid black');
             $("#steButton").css('background-color', 'transparent').css('border', '0px solid black');
         }); 
+
         $("#check-inv-number").click(function(){
             var inv_number = $("#inv-nbr-finder").val();
 
@@ -43,8 +47,30 @@
                 }
                 });
         });
-
     });
+
+    function confirmInvFinish() {
+            var prompt = confirm("Czy jesteś pewien?");
+            if(prompt == true){
+                window.location.href = 'finish';
+            } else {}
+    }    
+
+    function confirmEvidencedDelete(evid_id) {
+            var link = 'evidenced/' + evid_id + '/delete'
+            var prompt = confirm("Czy jesteś pewien?");
+            if(prompt == true){
+                window.location.href = link;
+            } else {}
+    }      
+
+    function confirmUnknownDelete(unk_id) {
+            var link = 'unknown/' + unk_id + '/delete'
+            var prompt = confirm("Czy jesteś pewien?");
+            if(prompt == true){
+                window.location.href = link;
+            } else {}
+    }       
 </script>
     <!-- CONTENT -->
     <div class="container">
@@ -55,10 +81,10 @@
                 </div>
                 <div class="col header-btn">
                     {%- if stocktaking.finished == false -%}
-                    <button type="button" class="btn btn-warning">Edytuj</button>
-                    <button type="button" class="btn btn-danger">Zakończ</button>
+                    <a type="button" class="btn btn-warning" href="{{ url_for('invent.inv_edit', inv_id=stocktaking.id) }}">Edytuj</a>
+                    <a type="button" class="btn btn-danger" onclick="confirmInvFinish()">Zakończ</a>
                     {%- else -%}
-                    <a type="button" class="btn btn-info" style="color: white;" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id) }}">Podsumowanie</a>
+                    <a type="button" class="btn btn-info" style="color: white;" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='evidenced') }}">Podsumowanie</a>
                     {%- endif -%}
                 </div>
             </div>
@@ -185,6 +211,13 @@
                     </div>
                 </div>
                 <div id="stocktakingsEvidenced">
+                    {% if not items_evidenced %}
+                    <div class="container" style="text-align: center; font-family: khand;">
+                        <i class="fas fa-sad-tear fa-5x"></i>
+                        <br /><br />
+                        <h4>Brak elementów do wyświetlenia</h4>                
+                    </div>     
+                    {% else %}
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
@@ -201,17 +234,31 @@
                                     <td><a href="#">{{ item.id }}</a>
                                         <td class="hidden-xs">{{ item.inv_number}}</td>
                                         <td class="hidden-xs">{{ item.localization }}</td>
-                                        <td class="hidden-xs">{{ item.add_date}}</td>
+                                        <td class="hidden-xs">{{ item.add_date.strftime('%d-%m-%Y %H:%M:%S')}}</td>
                                         <td>
-                                            <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Podgląd</a>
-                                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete',item_id=item.id,next=request.full_path) }}">Usuń</a>
+                                            <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.occur_id) }}">Podgląd</a>
+                                            <a type="button" class="btn btn-danger btn-custom" onclick="confirmEvidencedDelete('{{item.id}}')">Usuń</a>
                                         </td> 
                                 </tr>                                   
-                                {% endfor %}                                  
+                                {% endfor %}                                      
                         </tbody>
                     </table>  
+                    {% endif %}
                 </div>
                 <div id="stocktakingsNonevidenced">
+                    {% if not items_nonevidenced %}
+                    <div class="container" style="text-align: center; font-family: khand;">
+                        <i class="fas fa-sad-tear fa-5x"></i>
+                        <br /><br />
+                        <h4>Brak elementów do wyświetlenia</h4>                
+                    </div>     
+                    {% else %}
+                    <div class="row" style="text-align: center;">
+                        <div class="col">
+                            <a type="button" class="btn btn-info btn-custom btn-block" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='nonevidenced') }}">Drukuj różnice</a> 
+                        </div>
+                        <br/><br/>                                                                               
+                    </div>
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
@@ -227,7 +274,7 @@
                                     <td><a href="#">{{ item.id }}</a>
                                         <td class="hidden-xs">{{ item.inv_number}}</td>
                                         <td class="hidden-xs">{{ item.localization }}</td>
-                                        <td class="hidden-xs">{{ item.add_date}}</td>
+                                        <td class="hidden-xs">{{ item.add_date.strftime('%d-%m-%Y %H:%M:%S')}}</td>
                                         <td>
                                             <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Podgląd</a>
                                         </td> 
@@ -235,8 +282,24 @@
                                 {% endfor %}                                  
                         </tbody>
                     </table>  
+                    {% endif %}
                 </div>                 
                 <div id="stocktakingsUnknown">
+                    {% if items_unknown.first() == None %}
+                    <div class="container" style="text-align: center; font-family: khand;">
+                        <i class="fas fa-sad-tear fa-5x"></i>
+                        <br /><br />
+                        <h4>Brak elementów do wyświetlenia</h4>                
+                    </div>     
+                    {% else %}
+                        {% if stocktaking.finished == True %}
+                        <div class="row" style="text-align: center;">
+                            <div class="col">
+                                <a type="button" class="btn btn-info btn-custom btn-block" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='unknown') }}">Drukuj nieznane</a> 
+                            </div>
+                            <br/><br/>                                                                               
+                        </div>  
+                        {% endif %}                  
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
@@ -249,20 +312,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                                {% for item in items_unknown %}
+                                {% for unk in items_unknown %}
                                 <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                    <td><a href="#">{{ item.id }}</a>
-                                        <td class="hidden-xs">{{ item.inv_number}}</td>
-                                        <td class="hidden-xs">{{ item.localization }}</td>
-                                        <td class="hidden-xs">{{ item.add_date }}</td>
-                                        <td class="hidden-xs">{{ item.description }}</td>
+                                    <td><a href="#">{{ unk.id }}</a>
+                                        <td class="hidden-xs">{{ unk.inv_number}}</td>
+                                        <td class="hidden-xs">{{ unk.localization }}</td>
+                                        <td class="hidden-xs">{{ unk.add_date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                                        <td class="hidden-xs">{{ unk.description }}</td>
                                         <td>
-                                            <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.id) }}">Usuń</a>
+                                            <a type="button" class="btn btn-danger btn-custom" onclick="confirmUnknownDelete('{{unk.id}}')">Usuń</a>
                                         </td> 
                                 </tr>                                   
                                 {% endfor %}                                  
                         </tbody>
                     </table>  
+                    {% endif %}
                 </div> 
 
             </div>
@@ -287,17 +351,15 @@
                                     <input class="form-control" id="inv-nbr-finder" type="text" placeholder="Nr. inwentarzowy" required>
                                 </div>
                                 <button type="button" class="btn btn-success" id="check-inv-number">Wprowadź</button>
-                            </form>                            
+                            </form>
+                            <div class="container" id="alert-holder">
+                                
+                            </div>                          
                         </div>
                         <div class="col">
                             
                         </div>                                                
                     </div>
-
-                        <hr />
-                        <div class="container" id="alert-holder">
-                        
-                        </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->  

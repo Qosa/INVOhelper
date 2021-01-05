@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators, FormField, TextAreaField, FileField, SubmitField, FieldList, TextField
+from wtforms import StringField, validators, FormField, TextAreaField, FileField, SubmitField, FieldList, TextField, BooleanField
 from wtforms.fields.html5 import DateField
 
 class AddItemForm(FlaskForm):
@@ -11,7 +11,6 @@ class AddItemForm(FlaskForm):
     image = FileField('zdjecie')
     attachment = FileField('Załącznik')
     submit = SubmitField(u"Zatwierdź")
-
 
 class Creator(FlaskForm):
     commissioner_name = StringField(render_kw={"class":"form-control","placeholder": "Imię"})
@@ -30,7 +29,10 @@ class Sample2(FlaskForm):
     submit = SubmitField('Submit') 
 
 class AddTask(FlaskForm):
-    date_start = DateField('DatePicker', format='%Y-%m-%d')
-    date_end = DateField('DatePicker', format='%Y-%m-%d')
-    task = StringField(render_kw={"class":"form-control","placeholder": "Zadanie"})
+    date_start = DateField('Data startu', format='%Y-%m-%d',validators=[validators.DataRequired(message=u"Proszę wypełnić to pole!")],render_kw={"class":"form-control"})
+    onetimer = BooleanField('Wydarzenie jednorazowe')
+    date_exp_end = DateField('Data końca', format='%Y-%m-%d',validators=[validators.DataRequired(message=u"Proszę wypełnić to pole!")],render_kw={"class":"form-control"})
+    task = StringField('Zadanie',validators=[validators.DataRequired(message=u"Proszę wypełnić to pole!"),
+                                   validators.Length(1, 128, message=u"Długość od 1 do 128 znaków.")],render_kw={"class":"form-control","placeholder": "Zadanie"})
     submit = SubmitField('Submit') 
+

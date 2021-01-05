@@ -9,6 +9,13 @@
             $('[data-toggle="tooltip"]').tooltip();
 
         });
+
+        function confirmDelete() {
+            var prompt = confirm("Czy jesteś pewien?");
+            if(prompt == true){
+                window.location.href = 'delete';
+            } else {}
+        }
     </script>
     <div class="container">
         <div class="content-header">
@@ -18,7 +25,7 @@
                 </div>
                 <div class="col header-btn">
                     <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit_occurrence',occur_id=occurrence.id) }}">Edytuj</a>
-                    <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete_occurrence',occur_id=occurrence.id) }}">Usuń</a>
+                    <a type="button" class="btn btn-danger btn-custom" onclick="confirmDelete()">Usuń</a>
                 </div>
             </div>
             <hr/>
@@ -26,57 +33,50 @@
 
         <div class="item-info">
             <div class="row">
-                <div class="col">
+                <div class="col-md-4">
+                    <div class="container">
+                        <img src="{{ img }}" style="max-width: 100%; max-height: 200px; margin-top: 15px;">
+                    </div>
+                </div>
+                <div class="col-md-8">
                     <div class="row">
-                        <div class="col col-header">
+                        <div class="col-md-4 col-header">
                             <h4>Typ:</h3>
                         </div>
-                        <div class="col col-item-data">
+                        <div class="col-md-8 col-item-data">
                             <a href="{{ url_for('items.details',item_id=occurrence.item_id) }}">{{ occurrence.get_item_name(occurrence.item_id) }}</a>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col col-header">
+                        <div class="col-md-4 col-header">
                             <h4>Data dodania:</h3>
                         </div>
-                        <div class="col col-item-data">
+                        <div class="col-md-8 col-item-data">
                             {{ occurrence.add_date }}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col col-header">
+                        <div class="col-md-4 col-header">
                             <h4>Lokalizacja:</h3>
                         </div>
-                        <div class="col col-item-data">
+                        <div class="col-md-8 col-item-data">
                             {{ occurrence.localization }}
                         </div>
                     </div>    
                     <div class="row">
-                        <div class="col col-header">
+                        <div class="col-md-4 col-header">
                             <h4>Numer inwentarzowy:</h3>
                         </div>
-                        <div class="col col-item-data">
+                        <div class="col-md-8 col-item-data">
                             <div class="row">
                                 <div class="col">
                                     {{ occurrence.inv_number }}
                                 </div>
                                 <div class="col">
                                     <a type="button" class="btn btn-success btn-custom" data-toggle="modal" data-target="#qrModal">Kod QR</a>
-                                    {% if canEAN == 1 %}
-                                        <a type="button" class="btn btn-success btn-custom" data-toggle="modal" data-target="#barModal">Kod kreskowy</a>
-                                    {% else %}
-                                        <a type="button" data-toggle="tooltip" data-placement="right" title="Nie można wygenerować kodu EAN z podanej wartości - wykryto niedozwolone znaki. Należy edytować numer inwentarzowy."><button class="btn btn-success btn-custom disabled">Kod kreskowy</a></a>
-                                    {% endif %}
+                                    <a type="button" class="btn btn-success btn-custom" data-toggle="modal" data-target="#barModal">Kod kreskowy</a>
                                 </div> 
                             </div>  
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col col-header">
-                            <h4>Załączniki:</h3>
-                        </div>
-                        <div class="col col-item-data">
-                            {{ occurrence.documents }}
                         </div>
                     </div>                                                                                            
                 </div>
@@ -91,12 +91,6 @@
                     <div class="col-md-8 col-md-offset-8">
                         <h4>Załączniki:</h4>
                     </div>
-                    <div class="col-md-4 col-md-offset-4">
-                        <button type="button" class="btn btn-custom btn-success btn-block" data-toggle="modal"
-                                data-target="#myModal">
-                            Dodaj załącznik
-                        </button>
-                    </div>
                 </div>
             </li>
             {%- if occurrence.documents -%}
@@ -106,7 +100,7 @@
                             <div class="col-md-3">
                                 <div class="row">
                                     <div style="display: inline-block; width: 100%; text-align: center;">
-                                        <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',inv_number=occurrence.inv_number,filename=occurrence.documents) }}">
+                                        <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',inv_number=dirname,filename=occurrence.documents) }}">
                                             <i class="far fa-file-alt fa-5x"></i> 
                                         </a>
                                     </div>
@@ -139,7 +133,7 @@
                         </div>
                         <div class="col-md-4 col-md-offset-4">
                             <button type="button" class="btn btn-custom btn-success btn-block" data-toggle="modal"
-                                    data-target="#xModal">
+                                    data-target="#comModal">
                                 Dodaj komentarz
                             </button>
                         </div>
@@ -154,7 +148,7 @@
                                 {%- if comment.create_timestamp==comment.edit_timestamp -%}
                                     <h4>
                                         <small>
-                                            Przesłany: {{ comment.create_timestamp }}</small>
+                                            Przesłany: {{ comment.create_timestamp.strftime("%d-%m-%Y %H:%M:%S") }}</small>
                                     </h4>
                                 {%- else -%}
                                     <h4>
@@ -234,10 +228,11 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->       
 
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="comModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <h4 class="modal-title">Komentarz</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title"></h4>

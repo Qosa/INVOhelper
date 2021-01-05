@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% block mycontent %}
+    <script>
+    function confirmDeleteItem() {
+        var prompt = confirm("Czy jesteś pewien?");
+        if(prompt == true){
+            window.location.href = 'delete';
+        } else {}
+    }
+
+    function confirmDeleteOccur(item_id) {
+        var link = '../occurrence/' + item_id + '/delete';
+        var prompt = confirm("Czy jesteś pewien?");
+        if(prompt == true){
+            window.location.href = link;
+        } else {}
+    }
+    </script>
     <!-- CONTENT -->
     <div class="container">
         <div class="content-header">
@@ -8,8 +24,8 @@
                     <h2>Przedmiot</h2>
                 </div>
                 <div class="col header-btn">
-                    <button type="button" class="btn btn-warning">Edytuj</button>
-                    <button type="button" class="btn btn-danger">Usuń</button>
+                    <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit', item_id=item.id) }}">Edytuj</a>
+                    <a type="button" class="btn btn-danger btn-custom" onclick="confirmDeleteItem()">Usuń</a>
                 </div>
             </div>
             <hr/>
@@ -62,6 +78,13 @@
                         </div>
                     </div>
                 </div>
+                {% if occurrences.first() == None %}
+                <div class="container" style="text-align: center; font-family: khand;">
+                    <i class="fas fa-sad-tear fa-5x"></i>
+                    <br /><br />
+                    <h4>Brak elementów do wyświetlenia</h4>                
+                </div>
+                {% else %}
                 <table class="table table-striped">
                     <thead class="thead-custom">
                         <tr>
@@ -78,16 +101,17 @@
                                   <td><a href="#">{{ occurrence.id }}</a>
                                   <td class="hidden-xs">{{ occurrence.inv_number}}</td>
                                   <td class="hidden-xs">{{ occurrence.localization }}</td>
-                                  <td class="hidden-xs">{{ occurrence.add_date}}</td>
+                                  <td class="hidden-xs">{{ occurrence.add_date.strftime("%d-%m-%Y %H:%M:%S") }}</td>
                                   <td>
                                       <a type="button" class="btn btn-success btn-custom" href="{{ url_for('items.occurrence_details',occur_id=occurrence.id) }}">Podgląd</a>
                                       <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit_occurrence',occur_id=occurrence.id) }}">Edytuj</a>
-                                      <a type="button" class="btn btn-danger btn-custom" href="{{ url_for('items.delete',item_id=occurrence.id,next=request.full_path) }}">Usuń</a>
+                                      <a type="button" class="btn btn-danger btn-custom" onclick="confirmDeleteOccur('{{ occurrence.id }}')">Usuń</a>
                                   </td>
                               </tr>
                               {% endfor %}                 
                       </tbody>
                 </table>
+                {% endif %}
             </div>
         </div>
     </div>

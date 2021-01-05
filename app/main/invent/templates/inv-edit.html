@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block mycontent %}
+<script>
+    $(document).ready(function() {
+        var index = 0;
+
+        $('#com_members').find('.com_member').each(function () {
+            $(this).attr('id','comMember' + index);
+            $(this).attr('name','comMember');
+            index += 1;
+        });
+
+        $("#addNewField").click(function() {
+            clone = $('#addComMember').clone()  
+
+            clone.find(':input').each(function (idx, ele) {
+                ele.name = "comMember";
+                ele.id = "comMember" + index;
+                ele.placeholder = "Czł. komisji";
+                ele.value = '';
+                index += 1;
+            }).end().appendTo('#flist_members').slideDown('slow');   
+
+            clone.find('.member').append('<div class="col-md-1"><button type="button" class="close" id="delMember">&times;</button></div><br /><br />')
+
+            $("#flist_members").on('click', '.close', function(e) {
+                e.preventDefault();
+                $(this).parent().parent().remove();
+            });             
+        });  
+        
+        $("#flist_members").on('click', '.close', function(e) {
+            e.preventDefault();
+            $(this).parent().parent().remove();           
+        });  
+    });       
+</script>
+<div class='col-header'>
+    <h2>Edytuj inwentaryzację</h2>
+    <form method="POST">  
+        <div class="form-group">
+            <label for="formGroupExampleInput">Lokalizacja</label>
+            <input type="text" class="form-control" name="localization" id="localization" placeholder="Lokalizacja" value="{{ inv.localization }}" required>
+        </div>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Nr. MPK</label>
+            <input type="text" class="form-control" name="mpkNumber" id="mpkNumber" placeholder="Nr. MPK" value="{{ inv.mpk_number }}" required>
+        </div>  
+        <h4>Komisja inwentaryzacyjna:</h4>
+        <div class="form-group">
+            <label for="formGroupExampleInput">Przewodniczący</label>
+            <div id="addComMember">
+                <div class="container row member">
+                    <input type="text" class="form-control com_member col-md-11" name="commissioner" id="commissioner" placeholder="Przew. komisji" value="{{ inv.commissioner }}" required>
+                </div>
+            </div>  
+        </div>    
+        <div class="form-group" id="com_members">
+            <label for="formGroupExampleInput">Członkowie</label>
+            <button type="button" class="btn btn-success btn-custom" id="addNewField">Dodaj</button> 
+            <div id="flist_members">
+                {% for member in inv.com_members %}
+                <div class="container row member">
+                    <input type="text" class="form-control com_member col-md-11" name="commissioner" id="commissioner" placeholder="Czł. komisji" value="{{ member }}" required><div class="col-md-1" style="text-align: center;"><button type="button" class="close" id="delMember">&times;</button><br /><br /></div>
+                </div>
+                {% endfor %}   
+            </div> 
+        </div>          
+        <p><button type="submit" class="btn btn-success">Zatwierdź</button></p>
+    </form>
+</div>
+{% endblock %}

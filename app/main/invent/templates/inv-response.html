@@ -1,25 +1,71 @@
-{% if inv_response == 1 %}
-    <div class="alert alert-success" role="alert">
-        <div class="col">
-            <div class="row">
-                Przedmiot: . Czy dodać?
+    <script>
+    function addToEvidenced(inv_response,inv_number) {
+            console.log(inv_number);
+            $.ajax({
+                url: "evidenced/add",
+                type: "post",
+                data: {inv_number: inv_number, inv_response: inv_response},
+                success: function(response) {
+                    alert("Dodano przedmiot do spisu!");
+                    document.location.href="details";
+                },
+                error: function(xhr) {
+                    //Do Something to handle error
+                }
+                })
+        } 
+
+    function addToUnknown(inv_response,inv_number) {
+            var unk_loc = $('#unk_loc').val();
+            var unk_desc = $('#unk_desc').val();
+            $.ajax({
+                url: "unknown/add",
+                type: "post",
+                data: {inv_number: inv_number, inv_response: inv_response, unk_loc: unk_loc, unk_desc: unk_desc},
+                success: function(response) {
+                    alert("Dodano nieznany przedmiot do spisu!");
+                    document.location.href="details";
+                },
+                error: function(xhr) {
+                    //Do Something to handle error
+                }
+                })
+        }         
+    </script>
+    {% if inv_response == 1 %}
+    <form method="POST">
+        <div class="alert alert-success" role="alert">
+            <div class="col">
+                <div class="row">
+                    Przedmiot: . Czy dodać?
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-success btn-block" onclick="addToEvidenced('{{inv_response}}','{{inv_number}}')">Dodaj</button>
+                </div>
             </div>
-            <div class="row">
-                <button class="btn btn-success btn-block">Dodaj</button>
+        </div>    
+    </form>    
+    {% elif inv_response == 2 %}
+        <div class="alert alert-warning" role="alert">Podany przedmiot został już spisany w tej inwentaryzacji!</div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            <div class="col">
+                <div class="row">
+                    Brak podanego numeru inwentarzowego w bazie! Czy dodać do spisu jako nieznany?
+                </div>
+                <div class="row">
+                    <label>Lokalizacja:</label>
+                    <input id="unk_loc" type="text" class="form-control">
+                </div>
+                <div class="row">
+                    <label>Opis:</label>
+                    <textarea id="unk_desc" class="form-control"></textarea>                   
+                </div>             
+                <br /> 
+                <div class="row">
+                    <button type="button" class="btn btn-danger btn-block" onclick="addToUnknown('{{inv_response}}','{{inv_number}}')">Dodaj</button>
+                </div>
             </div>
         </div>
-    </div>    
-{% elif inv_response == 2 %}
-    <div class="alert alert-warning" role="alert">Podany przedmiot został już spisany w tej inwentaryzacji!</div>
-{% else %}
-    <div class="alert alert-danger" role="alert">
-        <div class="col">
-            <div class="row">
-                Brak podanego numeru inwentarzowego w bazie! Czy dodać do spisu jako nieznany?
-            </div>
-            <div class="row">
-                <button class="btn btn-danger btn-block">Dodaj</button>
-            </div>
-        </div>
-    </div>
-{% endif %}
+    {% endif %}
+

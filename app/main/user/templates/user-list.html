@@ -1,0 +1,46 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<div class="container">
+    <div class="content-header">
+        <div class="row">
+            <div class="col">
+                <h2>Lista użytkowników:</h3>
+            </div>
+            <div class="col header-btn">
+                {% if current_user.role == 1 %}
+                    <a type="button" class="btn btn-success btn-custom" href="{{ url_for('user.register') }}">Dodaj</a>
+                {% endif %}    
+            </div>
+        </div>
+    </div>
+    <div id="stocktakingsPending">
+        <table class="table table-striped">
+            <thead class="thead-custom">
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Login</th>
+                <th scope="col">Rola</th>
+                <th scope="col">Inwentaryzacje</th>
+                <th scope="col">Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for user in users %}
+                        {% if user.role != 1 %}
+                            <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                <td><a href="#">{{ user.id }}</a>
+                                <td class="hidden-xs">{{ user.login }}</td>
+                                <td class="hidden-xs">{{ user.role }}</td>
+                                <td class="hidden-xs">{{ user.stocktakings }}</td>
+                                <td>
+                                    <a type="button" class="btn btn-success btn-custom" href="{{ url_for('user.user_edit',user_id=user.id)}}">Edytuj</a>
+                                    <a type="button" class="btn btn-success btn-custom" href="{{ url_for('user.user_delete',user_id=user.id)}}">Usuń</a>
+                                </td>
+                            </tr>
+                        {% endif %}    
+                    {% endfor %}                                 
+            </tbody>
+        </table>
+    </div>   
+</div>
+{%- endblock -%}

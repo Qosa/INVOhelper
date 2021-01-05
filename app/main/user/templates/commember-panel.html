@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- CONTENT -->
+    <div class="container">
+        <ul class="square-menu">
+            <li>
+                <a href="{{ url_for('items.index') }}">
+                    <div class="container menu-item">
+                        <div class="row row-up">
+                            <div class="col-sm-6" style="border: 1px red;">
+                                <i class="fas fa-boxes fa-3x "></i>
+                            </div>
+                            <div class="col-sm-6" style="border: 1px blue;">
+                                
+                            </div>                            
+                        </div>
+                        <div class="row row-down">
+                            <div class="col-sm-12" style="border: 1px green;">
+                                Spis przedmiotów
+                            </div>   
+                        </div>                         
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('invent.inv_list') }}">
+                    <div class="container menu-item">
+                        <div class="row row-up">
+                            <div class="col-sm-6" style="border: 1px red;">
+                                <i class="fas fa-copy fa-3x "></i>
+                            </div>
+                            <div class="col-sm-6" style="border: 1px blue;">
+                                
+                            </div>                            
+                        </div>
+                        <div class="row row-down">
+                            <div class="col-sm-12" style="border: 1px green;">
+                                Inwentaryzacje
+                            </div>   
+                        </div>                         
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="container menu-item">
+                        <div class="row row-up">
+                            <div class="col-sm-6" style="border: 1px red;">
+                                <i class="fas fa-folder-open fa-3x "></i>
+                            </div>
+                            <div class="col-sm-6" style="border: 1px blue;">
+                                
+                            </div>                            
+                        </div>
+                        <div class="row row-down">
+                            <div class="col-sm-12" style="border: 1px green;">
+                                Dokumenty
+                            </div>   
+                        </div>                         
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

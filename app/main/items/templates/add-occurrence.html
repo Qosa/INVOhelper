@@ -12,7 +12,11 @@
     });
 </script>
 <div class='col-header'>
+    {% if edit==0 %}
     <h2>Dodaj wystąpienie przedmiotu</h2>
+    {% else %}
+    <h2>Edytuj wystąpienie przedmiotu</h2>
+    {% endif %}
     <form method="POST" enctype="multipart/form-data">  
         {{ form.csrf_token }}    
         <div class="form-group">
@@ -21,6 +25,7 @@
                 <div class="col">
                     <p id="indexManual">{{ form.inv_number }}</p>
                 </div>
+                {% if edit==0 %}
                 <div class="col">
                     {% if generated_value != 0 %}
                         <button type="button" id="invNbrGenerator" class="btn btn-success">Generuj</button>
@@ -28,6 +33,7 @@
                         <span data-toggle="tooltip" data-placement="right" title="Nie można wygenerować numeru inwentarzowego dla tego wystąpienia przedmiotu - numer przedmiotu niezgodny z formatem!"><button type="button" class="btn btn-success btn-custom disabled">Generuj</button></span>
                     {% endif %}                          
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
@@ -35,11 +41,25 @@
             <p>{{ form.localization }}</p>
         </div>
         <div class="form-group">
-            <label for="formGroupExampleInput">Zdjęcie</label>
+            <label for="formGroupExampleInput">Zdjęcie (max.1)</label>
+            {% if edit==1 %}
+                {% if occurrence.img=='' %}
+                <p>Aktualnie: Brak</p>
+                {% else %}
+                <p>Aktualnie: {{ occurrence.img }}</p>
+                {% endif %}
+            {% endif %}
             <p>{{ form.img }}</p>
         </div>  
         <div class="form-group">
-            <label for="formGroupExampleInput">Załączniki</label>
+            <label for="formGroupExampleInput">Załączniki (max.1)</label>
+            {% if edit==1 %}
+                {% if occurrence.documents=='' %}
+                <p>Aktualnie: Brak</p>
+                {% else %}
+                <p>Aktualnie: {{ occurrence.documents }}</p>
+                {% endif %}
+            {% endif %}
             <p>{{ form.documents }}</p>
         </div>          
         <p>{{ form.submit() }}</p>

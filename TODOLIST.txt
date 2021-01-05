@@ -1,0 +1,100 @@
+invent/1/schedule/addtask
+- nie dziala wydruk harmonogramu
+- nie dziala eksport do pliku .csv
+- trzeba poprawic kalendarz tak, aby nie przeladowywal strony	
+- przyjrzec sie przetwarzaniu dat w kalendarzu	
+
+- moduł DOKUMENTY
+- dodanie stron dla obslugi 404, 500 oraz braku uprawnien
+
+
+[MOBILE]
+- implementacja komunikacji z tokenem
+- 
+
+        {% if form.errors %}
+            {{ form.errors }}
+        {% endif %}
+    occurrences = ItemList.query.filter_by(item_id=item_id)
+    flash(u'Pomyślnie usunięto pozycję!', 'danger')
+    return render_template("item-details.html", item=item, occurrences=occurrences)  
+
+DIAGRAM SEKWENCJI:
+- sprawdzenie, czy przedmiot istnieje w bazie
+- sprawdzenie, czy przedmiot został juz spisany
+- zapisz parametry przedmiotu do spisu
+- zaaktualizuj stan inwentaryzacji
+
+PLAN PRACY:
+1. Krótki wstęp
+2. Specyfikacja wymagań
+	2.1 wymagania funkcjonalne
+	2.2 wymagania niefunkcjonalne
+3. Użyte technologie (wymieniłem najważniejsze z punktu widzenia aplikacji)
+- python
+- flask
+- postgreSQL
+- Android
+- java
+- xml
+- html5/css3
+- bootstrap
+- jQuery
+- REST API
+4. Projekt aplikacji
+	4.1 Wstęp
+	4.2 aplikacja webowa
+	- opis implementacji: serwer, domena
+	- opis zastosowania wymienionych narzędzi w projekcie aplikacji
+	4.3 aplikacja mobilna
+	- opis implementacji: aplikacja na system Android napisana przy pomocy java(backend) oraz XML(frontend)
+	- użyte biblioteki oraz technologie
+	4.4 komunikacja pomiędzy aplikacjami
+	- konstrukcja REST API
+	- zabezpieczenie komunikacji
+	4.5 Opis działania systemu
+	(diagram baz danych, diagram przypadków użycia)
+	- poziomy uprawnień użytkowników
+	- dodanie użytkownika
+	- dodanie przedmiotu
+	- dodanie inwentaryzacji (diagram aktywności???)
+	- dodawanie przedmiotow do spisu (diagram sekwencji)
+	- harmonogram i edycja harmonogramu
+	- zamykanie inwentaryzacji i wydruk podsumowania
+5. Użyteczność aplikacji
+6. Wykorzystywane narzędzia programistyczne
+	6.1 Visual Studio Code (web)
+	6.2 Android Studio (mobile)
+	6.3 Krótko - Git, Conda (środowiska wirtualne), Google Chrome(narzędzia programistyczne aplikacji), Werkzeug(flask debugger)
+GIT - otwarty, rozproszony system kontroli wersji, pozwalający na utrzymywanie repozytorium kodu projektu oraz wygodną pracę zespołową nad oprogramowaniem. GIT został stworzony przez Linusa Torvaldsa, twórcę jądra systemu Linux. Jego najważniejsze cechy to wsparcie dla rozgałęzionego procesu tworzenia oprogramowania, możliwość pobrania własnej kopii repozytorium i lokalną pracę nad kodem oraz wsparcie dla wielu protokołów sieciowych, dzięki czemu zmiany w repozytorium zdalnym można wprowadzać przez np. Internet.
+Conda - otwarte, międzyplatformowe narzędzie do zarządzania pakietami oprogramowania oraz do tworzenia i zarządzania środowiskami wirtualnymi. 
+Środowiska wirtualne są to oddzielne środowiska programistyczne, zawierające specyficzne dla danego projektu biblioteki i rozszerzenia. Mają zastosowanie szczególnie w przypadku pracy nad kilkoma różnymi projektami, które mogą powodować wzajemne konfilkty.
+Narzędzia dla programistów przeglądarki internetowej Google Chrome - rozbudowany zestaw narzędzi pomagających wygodnie analizować treść i zasoby strony internetowej. Pozwalają one m.in. na szczegółowe sprawdzenie informacji o błędach na stronie, sprawdzenie przepływu informacji przez sieć podczas ładowania strony, analizowanie wydajności. 
+Werkzeug - biblioteka typu WSGI (Web Server Gateway Interface) języka Python pozwalająca na lokalne uruchamianie aplikacji internetowych bez konieczności ich instalacji na serwerze WWW. Zawiera w sobie rozbudowany zestaw narzędzi do testowania i wykrywania błędów logiki aplikacji.
+
+7. Autoewaluacja
+8. Podsumowanie
+9. Spis rysunków 
+8. Bibliografia
+KSIĄŻKI:
+1. Python. Instrukcje dla programisty., Matthes, Eric - https://helion.pl/ksiazki/python-instrukcje-dla-programisty-wydanie-ii-eric-matthes,blkpy2.htm#format/d
+2. Thinking in Java. Edycja polska. Wydanie IV, Eckel, Bruce - https://helion.pl/ksiazki/thinking-in-java-edycja-polska-wydanie-iv-bruce-eckel,thi4vv.htm#format/d
+3. Czysty kod. Podręcznik dobrego programisty., Martin, Robert Cecil - https://helion.pl/ksiazki/czysty-kod-podrecznik-dobrego-programisty-robert-c-martin,czykov.htm#format/d
+STRONY:
+[WEB]
+1. Python3 - https://docs.python.org/3/
+2. Flask - https://flask.palletsprojects.com/en/1.1.x/
+4. jQuery - https://api.jquery.com/
+5. PostgreSQL - https://www.postgresql.org/docs/
+6. HTML - https://www.w3schools.com/html/default.asp
+7. CSS - https://www.w3schools.com/css/default.asp
+8. Bootstrap - https://getbootstrap.com/docs/4.1
+9. Biblioteka(ORM) - SQLAlchemy - https://docs.sqlalchemy.org/en/13/
+10. Biblioteka(zarządzanie użytkownikami oraz ich sesjami) - Flask-Login - https://flask-11. login.readthedocs.io/en/latest/
+[MOBILE]
+3. Java - https://docs.oracle.com/en/java/javase/15/
+12. Android - https://developer.android.com/docs
+13. Biblioteka(zapytania HTTP) - Retrofit - https://square.github.io/retrofit/
+14. Biblioteka(skaner kodów) - Code Scanner - https://github.com/yuriy-budiyev/code-scanner
+15. Biblioteka(przydzielanie uprawnień do zasobów) - Dexter - https://github.com/Karumi/Dexter
+

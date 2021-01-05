@@ -26,7 +26,7 @@
     border-bottom: #DADCE0 1px solid;
     border-left: #DADCE0 1px solid;
     }
-    ul li {
+    ul#calendar li {
         flex: 1 0 14%;
     }
 
@@ -101,12 +101,19 @@
             </div>
         </div>
         <div id="tasksPending">
+            {% if tasks_pending.first() == None %}
+            <div class="container" style="text-align: center; font-family: khand;">
+                <i class="fas fa-sad-tear fa-5x"></i>
+                <br /><br />
+                <h4>Brak elementów do wyświetlenia</h4>                
+            </div>     
+            {% else %}
             <table class="table table-striped">
                 <thead class="thead-custom">
                     <tr>
                     <th scope="col">#</th>
                     <th scope="col">Zadanie</th>
-                    <th scope="col">Data rozpoczęcia</th>
+                    <th scope="col">Przewidywana data rozpoczęcia</th>
                     <th scope="col">Przewidywana data zakończenia</th>
                     <th scope="col">Akcje</th>
                     </tr>
@@ -120,8 +127,8 @@
                                     {{ task.task }}
                                 </div>
                             </td>
-                            <td class="hidden-xs">{{ task.date_start }}</td>
-                            <td class="hidden-xs">{{ task.date_end }}</td>
+                            <td class="hidden-xs">{{ task.date_start.strftime('%Y-%m-%d') }}</td>
+                            <td class="hidden-xs">{{ task.date_exp_end.strftime('%Y-%m-%d') }}</td>
                             <td>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_finish', inv_id=task.inv_id, task_id=task.id) }}">Wykonaj</a>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_edit', inv_id=task.inv_id, task_id=task.id) }}">Edytuj</a>
@@ -131,6 +138,7 @@
                         {% endfor %}                                 
                 </tbody>
             </table>
+            {% endif %}
         </div>
         <div id="tasksEnded">
             <div class="item-list-header">
@@ -144,12 +152,19 @@
                     </div>
                 </div>
             </div>
+            {% if tasks_ended.first() == None %}
+            <div class="container" style="text-align: center; font-family: khand;">
+                <i class="fas fa-sad-tear fa-5x"></i>
+                <br /><br />
+                <h4>Brak elementów do wyświetlenia</h4>                
+            </div>     
+            {% else %}
             <table class="table table-striped">
                 <thead class="thead-custom">
                     <tr>
                     <th scope="col">#</th>
                     <th scope="col">Zadanie</th>
-                    <th scope="col">Data rozpoczęcia</th>
+                    <th scope="col">Przewidywana data rozpoczęcia</th>
                     <th scope="col">Data zakończenia</th>
                     <th scope="col">Akcje</th>
                     </tr>
@@ -163,17 +178,17 @@
                                     {{ task.task }}
                                 </div>
                             </td>
-                            <td class="hidden-xs">{{ task.date_start }}</td>
-                            <td class="hidden-xs">{{ task.date_end }}</td>
+                            <td class="hidden-xs">{{ task.date_start.strftime('%Y-%m-%d') }}</td>
+                            <td class="hidden-xs">{{ task.date_end.strftime('%Y-%m-%d') }}</td>
                             <td>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_retrieve', inv_id=task.inv_id, task_id=task.id) }}">Przywróć</a>
-                                <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_edit', inv_id=task.inv_id, task_id=task.id) }}">Edytuj</a>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_delete', inv_id=task.inv_id, task_id=task.id) }}">Usuń</a>
                             </td>
                         </tr>
                         {% endfor %}                                  
                 </tbody>
-            </table>  
+            </table> 
+            {% endif %} 
         </div>  
         <div id="tasksCalendar">
             <div class="item-list-header">
@@ -218,7 +233,7 @@
                                     {% for task in tasks %}
                                         {% if task.date_start.month == month and task.date_start.day == day-month_data[0] %}    
                                             <div style="border: 1px solid green;" class="container overme-calendar">
-                                                <span class="overme-calendar" style="color: green;" data-toggle="tooltip" data-placement="right" title="{{ task.task }} Rozpoczęcie:{{ task.date_start }} Zakończenie:{{ task.date_end }}">{{ task.task }}</span>  
+                                                <span class="overme-calendar" style="color: green;" data-toggle="tooltip" data-placement="right" title="{{ task.task }} Rozpoczęcie:{{ task.date_start.strftime('%Y-%m-%d') }} Zakończenie:{{ task.date_exp_end.strftime('%Y-%m-%d') }}">{{ task.task }}</span>  
                                             </div>
                                         {% endif %}
                                     {% endfor %}    

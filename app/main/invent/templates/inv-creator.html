@@ -15,7 +15,7 @@
         clone = $('#addComMember').clone()
 
         clone.find(':input').each(function (idx, ele) {
-        ele.name = ele.name;
+        ele.name = ele.name + len;
         ele.id = ele.id + len;
         ele.value = '';
 
@@ -38,10 +38,12 @@
             $("#commissionMembers").hide();
             $("#scheduler").show();
             $("#noEvents").appendTo('#events').show();
+            $("#nextStep").attr('type','button');
             nav += 1
         } else if (nav == 1) {
             $("#prevStep").show();
             $("#nextStep").html('Rozpocznij Inwentaryzację');
+            $("#nextStep").attr('type','button');
             $("#schedule").css('color', 'black');
             $("#scanner").css('color', 'green');
             $("#itemsScanning").show()
@@ -87,6 +89,23 @@
         });    
 
 });
+function validateForm() {
+    var ar=[];
+    $(".inv-creator-input").each(function () {
+        if($(this).val()==""){
+            $(this).css('border','1px red solid');
+            ar.push($(this).attr('name'));
+        } else {
+            $(this).css("border", "");
+        }
+    });
+    if(ar.length!=0){
+            alert('Występują nieuzupełnione pola! Przejrzyj wszystkie stopnie formularza i spróbuj ponownie!')
+            return false;
+        } else {
+            return true;
+    }
+}
 </script>
 
 <br/>
@@ -155,7 +174,7 @@
 
 <!-- CONTENT -->
 <div class="container" id="mainContent">
-    <form method="POST">
+    <form name="create_inv" method="POST" onsubmit="return validateForm()">
         <div class="row" id="dynamicContent">
             <!-- SKLAD KOMISJI-->
             <div class="container" id="commissionMembers">
@@ -169,7 +188,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="formGroupExampleInput">Imię</label>
-                                        <input type="text" class="form-control" name="memberName" id="memberName" aria-describedby="emailHelp" placeholder="Imię" required>
+                                        <input type="text" class="form-control inv-creator-input" name="memberName" id="memberName" aria-describedby="emailHelp" placeholder="Imię">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
@@ -177,7 +196,7 @@
                                         <label for="formGroupExampleInput">Nazwisko</label>
                                         <div class="row surname">
                                             <div class="col-md-11">
-                                                <input type="text" class="form-control" name="memberSurname" id="memberSurname" aria-describedby="emailHelp" placeholder="Nazwisko" required>
+                                                <input type="text" class="form-control inv-creator-input" name="memberSurname" id="memberSurname" aria-describedby="emailHelp" placeholder="Nazwisko">
                                             </div>
                                         </div>
                                     </div>
@@ -211,13 +230,13 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="formGroupExampleInput">Imię</label>
-                        <input type="text" class="form-control" name="invLocalization" id="invLocalization" aria-describedby="emailHelp" placeholder="Lokalizacja" required>
+                        <input type="text" class="form-control inv-creator-input" name="invLocalization" id="invLocalization" aria-describedby="emailHelp" placeholder="Lokalizacja">
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="formGroupExampleInput">Imię</label>
-                        <input type="text" class="form-control" name="invMpk" id="invMpk" aria-describedby="emailHelp" placeholder="MPK" required>
+                        <input type="text" class="form-control inv-creator-input" name="invMpk" id="invMpk" aria-describedby="emailHelp" placeholder="MPK">
                     </div>
                 </div>
             </div>
@@ -255,12 +274,12 @@
                 <div class='col-sm-6'>
                     <div class="form-group">
                         <div class='input-group date'>
-                            <input type="text" class="form-control" name="eventTask" id="eventTask" placeholder="Zadanie" required/>
-                            <input type='date' class="form-control" name="eventStartDate" id="eventStartDate" required/>
+                            <input type="text" class="form-control inv-creator-input" name="eventTask" id="eventTask" placeholder="Zadanie"/>
+                            <input type='date' class="form-control inv-creator-input" name="eventStartDate" id="eventStartDate"/>
                             <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                             </span>
-                            <input type='date' class="form-control" name="eventEndDate" id="eventEndDate" required/>
+                            <input type='date' class="form-control" name="eventEndDate" id="eventEndDate"/>
                             <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                             </span>                            
