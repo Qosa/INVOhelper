@@ -1,6 +1,6 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
@@ -62,8 +62,11 @@
                     <p><b>Różnice względem zadeklarowanego stanu</b></p>
                     {% elif doc_type == 'unknown' %}
                     <p><b>Nieznane przedmioty spisane podczas inwentaryzacji</b></p>
+                    {% elif doc_type == 'schedule' %}
+                    <p><b>Harmonogram inwentaryzacji</b></p>
                     {% endif %}
                 </div>
+                {% if doc_type != 'schedule' %}
                 <div id="stocktakingsPending">
                     <table class="table">
                         <thead class="thead">
@@ -77,7 +80,7 @@
                         <tbody>
                                 {% for item in items %}
                                 <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                    <td class="hidden-xs">{{ item.id }}</td>
+                                    <td class="hidden-xs">{{ loop.index }}</td>
                                     <td class="hidden-xs">{{ item.inv_number }}</td>
                                     <td class="hidden-xs">{{ item.item_id }}</td>
                                     <td class="hidden-xs">{{ item.localization}}</td>
@@ -99,6 +102,35 @@
                         {% endif %}   
                     {% endif %}                         
                 </div>
+                {% else %}
+                <div id="schedule">
+                    <table class="table">
+                        <thead class="thead">
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Zadanie</th>
+                            <th scope="col">Data rozpoczęcia</th>
+                            <th scope="col">Data zakończenia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for item in items %}
+                                <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                    <td class="hidden-xs">{{ loop.index }}</td>
+                                    <td class="hidden-xs">{{ item.task }}</td>
+                                    <td class="hidden-xs">{{ item.date_start.strftime('%d-%m-%Y')}}</td>
+                                    <td class="hidden-xs">{{ item.date_exp_end.strftime('%d-%m-%Y')}}</td>
+                                </tr>
+                                {% endfor %}                                    
+                        </tbody>
+                    </table>
+                    {% if items.first() == None %}
+                        <div class="container" style="text-align: center;">
+                            <p>Brak zaplanowanych zadań dla tej inwentaryzacji.</p>
+                        </div>
+                    {% endif %}                    
+                </div>
+                {% endif %}
             </div>
         </div>
           

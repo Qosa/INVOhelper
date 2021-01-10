@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block mycontent %}
+    <script>
+        $(document).ready(function() {
+            $(".Site-content").css('background-image','url("/static/img/panel-bcg.png")');
+        });
+    </script>
     <!-- CONTENT -->
-    <div class="container">
+    <div class="menu-content">
         <ul class="square-menu">
             <li>
                 <a href="{{ url_for('items.index') }}">
@@ -61,7 +66,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="" data-toggle="modal" data-target="#docsModal">
                     <div class="container menu-item">
                         <div class="row row-up">
                             <div class="col-sm-6" style="border: 1px red;">
@@ -79,6 +84,6 @@
                     </div>
                 </a>
             </li>
-        </ul>
+        </ul>        
     </div>
 {% endblock %}

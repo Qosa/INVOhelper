@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block mycontent %}
+<script>
+    $(document).ready(function() {
+
+        $(".Site-content").css('background-image','url("/static/img/user-bcg.png")');
+
+    });
+</script>
 <div class='col-header'>
     <h2>O użytkowniku</h2>
     <div class="col-md-4">
@@ -37,21 +44,23 @@
     </div>
     <br />
     <h2>Zmień hasło</h2>
-    <form method="POST">
-        {{ form.csrf_token }} 
-        <div class="form-group">
-            <label for="formGroupExampleInput">Stare hasło</label>
-            <p>{{ form.old_password }}</p>
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Nowe hasło</label>
-            <p>{{ form.new_password }}</p>
-        </div>
-        <div class="form-group">
-            <label for="formGroupExampleInput">Powtórz hasło:</label>
-            <p>{{ form.confirm_password }}</p>
-        </div>
-        <p>{{ form.submit() }}</p>
-    </form>
+    <div style="width: 50%;">
+        <form method="POST">
+            {{ form.csrf_token }} 
+            <div class="form-group">
+                <label for="formGroupExampleInput">Stare hasło</label>
+                <p>{{ form.old_password }}</p>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Nowe hasło</label>
+                <p>{{ form.new_password }}</p>
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Powtórz hasło:</label>
+                <p>{{ form.confirm_password }}</p>
+            </div>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
 </div>
 {% endblock %}

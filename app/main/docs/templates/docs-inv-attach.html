@@ -1,0 +1,125 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<script>
+    $(document).ready(function(){
+        $(".Site-content").css('background-image','url("/static/img/docs-bcg.png")');
+    });
+</script>
+<div class="container">
+    <div class="content-header">
+        <div class="row">
+            <div class="col">
+                <h2>Załączniki:</h3>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div id="docsAttachments">
+        <div class="row">
+            {% if finished == False %}
+            <div class="col-md-2">
+                <div class="media">
+                    <div class="media-body">
+                        <div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('invent.inv_document',inv_id=inv_id,doc_type='schedule') }}">
+                                        <i class="far fa-file-alt fa-7x"></i> 
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    Harmonogram
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-2">
+                <div class="media">
+                    <div class="media-body">
+                        <div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('invent.inv_document',inv_id=inv_id,doc_type='schedule') }}">
+                                        <i class="far fa-file-alt fa-7x"></i> 
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    Harmonogram
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="media">
+                    <div class="media-body">
+                        <div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('invent.inv_document',inv_id=inv_id,doc_type='evidenced') }}">
+                                        <i class="far fa-file-alt fa-7x"></i> 
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row" style="text-align: center;">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    Spisane przedmioty
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>               
+            </div>
+            <div class="col-md-2">
+                <div class="media">
+                    <div class="media-body">
+                        <div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('invent.inv_document',inv_id=inv_id,doc_type='nonevidenced') }}">
+                                        <i class="far fa-file-alt fa-7x"></i> 
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    Różnice wg. stanu
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>                
+            </div>
+            <div class="col-md-2">
+                <div class="media">
+                    <div class="media-body">
+                        <div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('invent.inv_document',inv_id=inv_id,doc_type='unknown') }}">
+                                        <i class="far fa-file-alt fa-7x"></i> 
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="display: inline-block; width: 100%; text-align: center;">
+                                    Nieznane przemioty
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>               
+            </div>
+            {% endif %}
+        </div>
+    </div>   
+</div>
+{%- endblock -%}

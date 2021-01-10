@@ -1,0 +1,39 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<script>
+    $(document).ready(function(){
+        $(".Site-content").css('background-image','url("/static/img/docs-bcg.png")');
+        $('.table').dataTable();
+    });
+</script>
+<div class="container">
+    <div class="content-header">
+        <div class="row">
+            <div class="col">
+                <h2>Załączniki:</h3>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div id="docsAttachments">
+            <div class="media">
+                <div class="media-body">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div style="display: inline-block; width: 100%; text-align: center;">
+                                <a type="button" class="btn btn-attachment btn-custom" href="{{ url_for('items.download_occurrence_attachment',inv_number=inv_number,filename=filename) }}">
+                                    <i class="far fa-file-alt fa-7x"></i> 
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="txt-overflow" style="display: inline-block; width: 100%; text-align: center;">
+                                {{ filename }}
+                            </div>
+                        </div>
+                    </div>                       
+                </div>
+            </div>
+    </div>   
+</div>
+{%- endblock -%}

@@ -2,6 +2,9 @@
 {% block mycontent %}
 <script>
     $(document).ready(function() {
+
+        $(".Site-content").css('background-image','url("/static/img/invent-bcg.png")');
+
         var index = 0;
 
         $('#com_members').find('.com_member').each(function () {
@@ -35,7 +38,7 @@
         });  
     });       
 </script>
-<div class='col-header'>
+<div class='col-header' style='width: 50%;'>
     <h2>Edytuj inwentaryzację</h2>
     <form method="POST">  
         <div class="form-group">

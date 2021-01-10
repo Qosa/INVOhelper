@@ -1,5 +1,13 @@
 {%- extends "base.html" -%}
 {%- block mycontent -%}
+<script>
+
+$(document).ready(function(){
+    $(".Site-content").css('background-image','url("/static/img/user-bcg.png")');
+    $('.table').dataTable();
+});
+
+</script>
 <div class="container">
     <div class="content-header">
         <div class="row">
@@ -13,6 +21,7 @@
             </div>
         </div>
     </div>
+    <hr/>
     <div id="stocktakingsPending">
         <table class="table table-striped">
             <thead class="thead-custom">
@@ -28,10 +37,20 @@
                     {% for user in users %}
                         {% if user.role != 1 %}
                             <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                <td><a href="#">{{ user.id }}</a>
+                                <td><a href="#">{{ loop.index - 1}}</a>
                                 <td class="hidden-xs">{{ user.login }}</td>
-                                <td class="hidden-xs">{{ user.role }}</td>
-                                <td class="hidden-xs">{{ user.stocktakings }}</td>
+                                {% if user.role == 2 %}
+                                    <td class="hidden-xs">Czł. komisji</td>
+                                {% elif user.role == 3 %}    
+                                    <td class="hidden-xs">Skaner</td>
+                                {% elif user.role == 4 %}    
+                                    <td class="hidden-xs">JST</td>    
+                                {% endif %}
+                                {% if user.role == 4 %}
+                                    <td class="hidden-xs">Wszystkie</td>
+                                {% else %}
+                                    <td class="hidden-xs">{{ user.stocktakings }}</td>
+                                {% endif %}
                                 <td>
                                     <a type="button" class="btn btn-success btn-custom" href="{{ url_for('user.user_edit',user_id=user.id)}}">Edytuj</a>
                                     <a type="button" class="btn btn-success btn-custom" href="{{ url_for('user.user_delete',user_id=user.id)}}">Usuń</a>

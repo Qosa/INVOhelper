@@ -1,10 +1,12 @@
+import csv
+import pdfkit
 from collections.abc import Iterable
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, send_file, make_response
 from flask_login import login_required, current_user
 from . import invent
 from . import forms
 from ..decorators import invent_permissions_required, permissions_required, admin_required
-from app import db
+from app import app, db
 import datetime
 from calendar import monthrange
 from app.models import Stocktaking, ItemList, Unknown, Item, Schedule, Evidenced
@@ -35,18 +37,19 @@ def creator():
 @invent.route('/list', methods=['GET', 'POST'] )
 @permissions_required
 def inv_list():       
-    if current_user.role == 1:
-        stocktakings_pending = Stocktaking.query.filter_by(finished=False)
-        stocktakings_ended = Stocktaking.query.filter_by(finished=True)
+    if current_user.role == 1 or current_user.role == 4:
+        stocktakings_pending = Stocktaking.query.filter_by(finished=False).order_by(Stocktaking.id)
+        stocktakings_ended = Stocktaking.query.filter_by(finished=True).order_by(Stocktaking.id)
     else:    
         for stocktaking in current_user.stocktakings:
-            stocktakings_pending = Stocktaking.query.filter_by(id=stocktaking,finished=False)
-            stocktakings_ended = Stocktaking.query.filter_by(id=stocktaking,finished=True)
+            stocktakings_pending = Stocktaking.query.filter_by(id=stocktaking,finished=False).order_by(Stocktaking.id)
+            stocktakings_ended = Stocktaking.query.filter_by(id=stocktaking,finished=True).order_by(Stocktaking.id)
     return render_template('inv-list.html', stocktakings_pending=stocktakings_pending, stocktakings_ended=stocktakings_ended)
 
 class EvidencedItemView:
-    def __init__(self, id, occur_id, inv_number, localization, add_date):
+    def __init__(self, id, item_id, occur_id, inv_number, localization, add_date):
         self.id = id
+        self.item_id = item_id
         self.occur_id = occur_id
         self.inv_number = inv_number
         self.localization = localization
@@ -63,7 +66,7 @@ def inv_details(inv_id):
     items_nonevidenced = []
     for evid in evidenced:
         occur = ItemList.query.get_or_404(evid.item_id)
-        items_evidenced.append(EvidencedItemView(evid.id,evid.item_id,occur.inv_number,occur.localization,evid.add_date))
+        items_evidenced.append(EvidencedItemView(evid.id,occur.item_id,evid.item_id,occur.inv_number,occur.localization,evid.add_date))
     if stocktaking.finished == True:
         items = ItemList.query
         print("zakonczona")
@@ -207,62 +210,65 @@ def inv_document(inv_id, doc_type):
         except:
             pass 
         print(items) 
+    elif doc_type == 'schedule':
+        items = Schedule.query.filter_by(inv_id=inv_id).order_by(Schedule.date_start)
     else:
         pass        
     return render_template('pdf-template.html', stocktaking=stocktaking, items=items, doc_type=doc_type)
 
-def previous_month_link(year, month):
-    if month > 1:
-        month -=1
-    else:
-        year -=1
-        month = 12    
-    return (
-        ""
-        "?y={}&m={}".format(year, month)
-    )
+@invent.route('/<int:inv_id>/schedule/pdf_generator', methods=['GET', 'POST'] )
+@invent_permissions_required  
+def inv_pdf_generator(inv_id):
+    stocktaking = Stocktaking.query.get_or_404(inv_id)
+    items = Unknown.query.filter_by(inv_id=inv_id)
+    html = render_template("pdf-template.html",stocktaking=stocktaking,items=items,doc_type='evidenced')
+    config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+    pdf = pdfkit.from_string(html, app.config['UPLOADS_DEFAULT_DEST']+'/stocktakings/output.pdf', configuration=config, options={"enable-local-file-access": None},css=app.config['UPLOADS_DEFAULT_DEST']+'/css/bootstrap.min.css')
+    response = make_response(pdf)
+    return response
 
-def next_month_link(year, month):
-    if month < 12:
-        month +=1
-    else:
-        year +=1
-        month = 1    
-    return (
-        ""
-        "?y={}&m={}".format(year, month)
-    )
+@invent.route('/<int:inv_id>/schedule/csv_generator', methods=['GET', 'POST'] )
+@invent_permissions_required  
+def inv_csv_generator(inv_id):
+    tasks = Schedule.query.filter_by(inv_id=inv_id).order_by(Schedule.date_start)
+    path = app.config['TEMP_CODES_DEST'] + '/schedule.csv'
+    with open(path, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Subject", "Start Date", "End Date"])
+        for task in tasks:
+            writer.writerow([task.task, task.date_start.strftime('%m/%d/%Y'), task.date_exp_end.strftime('%m/%d/%Y')])    
+    return send_file(path, as_attachment=True)   
 
 @invent.route('/<int:inv_id>/schedule', methods=['GET', 'POST'])    
 @invent_permissions_required
 def inv_schedule(inv_id):
-    tasks = Schedule.query.filter_by(inv_id=inv_id)
     tasks_pending = Schedule.query.filter_by(inv_id=inv_id,finished=False)
     tasks_ended = Schedule.query.filter_by(inv_id=inv_id,finished=True)
-    year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
-    months = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
-    current_month_name = months[month-1]
+    return render_template('inv-schedule.html', 
+                            inv_id=inv_id,
+                            tasks_pending=tasks_pending,
+                            tasks_ended=tasks_ended,
+                            )
+
+
+@invent.route('/<int:inv_id>/schedule/calendar', methods=['GET', 'POST'])    
+@invent_permissions_required
+def inv_schedule_calendar(inv_id):
+    tasks = Schedule.query.filter_by(inv_id=inv_id)
     if request.method == 'GET' and request.args.get("y") is not None and request.args.get("m") is not None:
         year = int(request.args.get("y"))
         month = int(request.args.get("m"))
-        current_month_name = months[month-1]
     if month > 1:    
         prev_month_data = monthrange(year,month-1)
     else:
         prev_month_data = monthrange(year-1,12)    
     month_data = monthrange(year,month)
-    return render_template('inv-schedule.html', 
-                            inv_id=inv_id,
+    return render_template('inv-calendar.html',
                             tasks=tasks,
+                            year=year,
                             month=month,
-                            current_month_name = current_month_name,
-                            tasks_pending=tasks_pending,
-                            tasks_ended=tasks_ended,
                             month_data=month_data, 
-                            prev_month_data=prev_month_data, 
-                            previous_month_link=previous_month_link(year,month),
-                            next_month_link=next_month_link(year,month)
+                            prev_month_data=prev_month_data
                             )
 
 @invent.route('/<int:inv_id>/schedule/finish/<int:task_id>/', methods=['GET', 'POST'])

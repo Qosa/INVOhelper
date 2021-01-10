@@ -11,3 +11,4 @@ from .items import items
 from .invent import invent
 from .comments import comments
 from .api import api
+from .docs import docs

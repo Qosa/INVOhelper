@@ -9,11 +9,13 @@ from app.models import User, TokenBlacklist
 def invent_permissions_required(f):
     @wraps(f)
     def inv_decorated_function(*args, **kwargs):
+        print(current_user.role)
         if current_user.role != 1:
-            if request.view_args['inv_id'] not in current_user.stocktakings:
-                abort(403)
-            if current_user.role == 3:
-                abort(403)
+            if current_user.role != 4:
+                if request.view_args['inv_id'] not in current_user.stocktakings:
+                    abort(403)
+                if current_user.role == 3:
+                    abort(403)
         return f(*args, **kwargs)
     return inv_decorated_function
 

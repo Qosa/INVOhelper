@@ -1,0 +1,108 @@
+<script>
+    $(document).ready(function() {
+
+        $(".Site-content").css('background-image','url("/static/img/invent-bcg.png")');
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var numitems =  $("#calendar li").length;
+
+        $("ul#calendar").css("column-count",Math.round(numitems/6));
+    });
+</script>
+    
+<style>
+    .calendar {
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-around;
+    min-width: 400px;
+    border-bottom: #DADCE0 1px solid;
+    border-left: #DADCE0 1px solid;
+    }
+    ul#calendar li {
+        flex: 1 0 14%;
+    }
+
+    ul#calendar li div {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+    }
+
+/* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
+    .overme-task{
+        width: 400px;
+        overflow:hidden; 
+        white-space:nowrap; 
+        text-overflow: ellipsis;
+    }
+
+    .overme-calendar {
+        width: 150px;
+        overflow:hidden; 
+        white-space:nowrap; 
+        text-overflow: ellipsis;
+    }
+    
+</style>
+
+<ul class="calendar" id="calendarHeader" style="list-style-type:none;">
+    <li>PONIEDZIALEK</li>
+    <li>WTOREK</li>
+    <li>ŚRODA</li>
+    <li>CZWARTEK</li>
+    <li>PIĄTEK</li>
+    <li>SOBOTA</li>
+    <li>NIEDZIELA</li>
+</ul>  
+<div id="changer"> 
+    <ul class="calendar col" id="calendar" style="list-style-type:none;">
+        {% for day in range(1,43) %}
+            {% if day > month_data[0] and day <= month_data[1]+month_data[0] %}
+                <li class="overme-calendar" style="height: 100px; width: 150px; border: 1px solid black;">
+                    <span>{{ day-month_data[0] }}</span>
+                    {% for task in tasks %}
+                        {% if task.date_start.month == month and task.date_start.year == year and task.date_start.day == day-month_data[0] %}    
+                            <div style="border: 1px solid green;" class="container overme-calendar">
+                                <span class="overme-calendar" style="color: green;" data-toggle="tooltip" data-placement="right" title="{{ task.task }} Rozpoczęcie:{{ task.date_start.strftime('%Y-%m-%d') }} Zakończenie:{{ task.date_exp_end.strftime('%Y-%m-%d') }}">{{ task.task }}</span>  
+                            </div>
+                        {% endif %}
+                    {% endfor %}    
+                </li>    
+            {% elif day > month_data[1]+month_data[0] %}
+                <li style="height: 100px; width: 150px; border: 1px solid black; background-color: E6E5E5;">
+                    <span style="color: black;">{{ day - (month_data[0]+month_data[1]) }}</span>  
+                </li>     
+            {% else %}
+                <li style="height: 100px; width: 150px; border: 1px solid black; background-color: E6E5E5;">
+                    <span style="color: black;">{{ prev_month_data[1] - (month_data[0] - day) }}</span>
+                </li>    
+            {% endif %}    
+        {% endfor %}
+    </ul>  
+</div> 

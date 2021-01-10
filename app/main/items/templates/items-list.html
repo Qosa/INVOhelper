@@ -8,6 +8,11 @@
             window.location.href = link;
         } else {}
     }
+
+    $(document).ready(function(){
+        $(".Site-content").css('background-image','url("/static/img/items-bcg.png")');
+        $('.table').dataTable();
+    });
     </script>
     <!-- CONTENT -->
     <div class="container">
@@ -21,6 +26,7 @@
                 </div>
             </div>
         </div>
+        <hr/>
         <table class="table table-striped">
             <thead class="thead-custom">
               <tr>
@@ -33,17 +39,19 @@
             </thead>
             <tbody>
                     {% for item in items %}
-                    <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                        <td><a id="" href="#">{{ item.id }}</a>
-                        <td class="hidden-xs">{{ item.name}}</td>
-                        <td class="hidden-xs">{{ item.inv_number}}</td>
-                        <td class="hidden-xs">{{ item.description}}</td>
-                        <td>
-                            <a type="button" class="btn btn-success btn-custom"  href="{{ url_for('items.details',item_id=item.id) }}">Podgląd</a>
-                            <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit',item_id=item.id) }}">Edytuj</a>
-                            <a type="button" class="btn btn-danger btn-custom" onclick="confirmDelete('{{item.id}}')">Usuń</a>
-                        </td>
-                    </tr>
+                        {% if item.id != 1 %}
+                            <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                                <td><a id="" href="#">{{ loop.index }}</a>
+                                <td class="hidden-xs">{{ item.index_nbr}}</td>
+                                <td class="hidden-xs">{{ item.name}}</td>
+                                <td class="hidden-xs">{{ item.count_occurrences()}}</td>
+                                <td>
+                                    <a type="button" class="btn btn-success btn-custom"  href="{{ url_for('items.details',item_id=item.id) }}">Podgląd</a>
+                                    <a type="button" class="btn btn-warning btn-custom" href="{{ url_for('items.edit',item_id=item.id) }}">Edytuj</a>
+                                    <a type="button" class="btn btn-danger btn-custom" onclick="confirmDelete('{{item.id}}')">Usuń</a>
+                                </td>
+                            </tr>
+                        {% endif %}    
                     {% endfor %}                 
             </tbody>
           </table>

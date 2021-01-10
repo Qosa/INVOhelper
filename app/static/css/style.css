@@ -20,6 +20,11 @@ body {
   height: 100% !important;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
 .Site {
     display: -webkit-box;
     display: -moz-box;
@@ -37,6 +42,9 @@ body {
     flex: 1 0 auto;
     width: 100%;
     margin-bottom: 30px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .panel.panel-inverse {
@@ -75,6 +83,19 @@ a:active {
     color: black;
 }
 
+.bg {
+    /* The image used */
+    background-image: url("/static/img/boxes.png");
+  
+    /* Full height */
+    height: 100%;
+  
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
 .hr-navbar {
     position: absolute;
     border: 0;
@@ -94,7 +115,6 @@ a:active {
 }
 
 .footer {
-    position:absolute;
     text-align: center;
     bottom: 0;
     width: 100%;
@@ -102,6 +122,7 @@ a:active {
     height: 60px;
     line-height: 60px; /* Vertically center the text there */
     background-color: #f5f5f5;
+    flex-shrink: 0;
 }
   
 .content {
@@ -114,8 +135,12 @@ a:active {
     overflow-y: scroll;  
 }
 
+.menu-content {
+    margin-left: 100px;
+}
+
 ul.square-menu {
-    position: absolute;
+    
     list-style-type: none;
     list-style: none;
     padding: 0;
@@ -149,10 +174,44 @@ ul.square-menu li .menu-item {
     transition: all 0.1s ease-in;
 }
 
+ul.square-menu li .docs-menu-item { 
+    text-decoration: none;
+    background:rgba(0, 153, 76);
+    color: white;
+    outline: 4px solid rgba(0, 153, 76);
+    border: 1px solid white;
+    font-family: khand;
+    font-weight: normal;
+    font-size: 125%;
+    text-align: right;
+    width: 195px;
+    height: 195px;
+    padding-top: 10px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+    -webkit-transition: all 0.1s ease-in;
+    -ms-transition: all 0.1s ease-in;
+    -moz-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+
 ul.square-menu li .menu-item:hover {
     text-decoration: none !important;
-    background: rgb(128, 128, 128);
-    outline: 4px solid rgb(128, 128, 128);
+    background: rgba(0, 153, 76);
+    outline: 4px solid rgba(0, 153, 76);
+    -moz-transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+    -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.12);
+}
+
+ul.square-menu li .docs-menu-item:hover {
+    text-decoration: none !important;
+    background: rgba(0, 153, 76);
+    outline: 4px solid rgba(0, 153, 76);
     -moz-transform: scale(1.2);
     -webkit-transform: scale(1.2);
     -o-transform: scale(1.2);
@@ -171,14 +230,12 @@ ul.square-menu li .menu-item:hover {
 }
 
 .content-header {
-    margin-top: 20px;
+    margin-top: 40px;
     margin-bottom: 10px;
-    margin-left: 15px;
     font-family: khand;
 }
 
 .header-btn {
-    margin-right: 15px;
     text-align: right;
 }
 
@@ -205,7 +262,6 @@ h4 {
 
 .item-list-header {
     margin-bottom: 10px;
-    margin-left: 15px;
     font-family: khand;
 }
 

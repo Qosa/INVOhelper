@@ -2,6 +2,7 @@
 {% block mycontent %}
 <script>
     $(document).ready(function() {
+        $(".Site-content").css('background-image','url("/static/img/invent-bcg.png")');
         $("#stocktakingsNonevidenced").hide();
         $("#stocktakingsUnknown").hide();
 
@@ -47,6 +48,9 @@
                 }
                 });
         });
+
+        $('.table').dataTable();
+
     });
 
     function confirmInvFinish() {
@@ -79,6 +83,7 @@
                 <div class="col">
                     <h2>Inwentaryzacja</h2>
                 </div>
+                {% if current_user.role != 4 %}
                 <div class="col header-btn">
                     {%- if stocktaking.finished == false -%}
                     <a type="button" class="btn btn-warning" href="{{ url_for('invent.inv_edit', inv_id=stocktaking.id) }}">Edytuj</a>
@@ -87,6 +92,7 @@
                     <a type="button" class="btn btn-info" style="color: white;" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='evidenced') }}">Podsumowanie</a>
                     {%- endif -%}
                 </div>
+                {% endif %}
             </div>
             <hr/>
         </div>
@@ -180,13 +186,13 @@
                             <h4>Spis z natury:</h4>
                         </div>
                         <div class="col header-btn">
-                            {%- if stocktaking.finished == false -%}
+                            {%- if stocktaking.finished == false and current_user.role != 4 -%}
                                 <button type="button" class="btn btn-success btn-custom" data-toggle="modal" data-target="#myModal">Dodaj</a>
                             {% endif %}        
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="item-list-header">
                     <div class="row">
                         <div class="col">
@@ -211,13 +217,6 @@
                     </div>
                 </div>
                 <div id="stocktakingsEvidenced">
-                    {% if not items_evidenced %}
-                    <div class="container" style="text-align: center; font-family: khand;">
-                        <i class="fas fa-sad-tear fa-5x"></i>
-                        <br /><br />
-                        <h4>Brak elementów do wyświetlenia</h4>                
-                    </div>     
-                    {% else %}
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
@@ -231,28 +230,26 @@
                         <tbody>
                                 {% for item in items_evidenced %}
                                 <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                    <td><a href="#">{{ item.id }}</a>
+                                    <td><a href="#">{{ loop.index }}</a>
                                         <td class="hidden-xs">{{ item.inv_number}}</td>
-                                        <td class="hidden-xs">{{ item.localization }}</td>
+                                        {% if item.item_id == 1 %}
+                                            <td class="hidden-xs" style="color: red;">USUNIĘTE</td>
+                                        {% else %}
+                                            <td class="hidden-xs">{{ item.localization }}</td>    
+                                        {% endif %}
                                         <td class="hidden-xs">{{ item.add_date.strftime('%d-%m-%Y %H:%M:%S')}}</td>
                                         <td>
                                             <a type="button" class="btn btn-primary btn-custom" href="{{ url_for('items.occurrence_details',occur_id=item.occur_id) }}">Podgląd</a>
+                                            {% if current_user.role != 4 %}
                                             <a type="button" class="btn btn-danger btn-custom" onclick="confirmEvidencedDelete('{{item.id}}')">Usuń</a>
+                                            {% endif %}
                                         </td> 
                                 </tr>                                   
                                 {% endfor %}                                      
                         </tbody>
                     </table>  
-                    {% endif %}
                 </div>
                 <div id="stocktakingsNonevidenced">
-                    {% if not items_nonevidenced %}
-                    <div class="container" style="text-align: center; font-family: khand;">
-                        <i class="fas fa-sad-tear fa-5x"></i>
-                        <br /><br />
-                        <h4>Brak elementów do wyświetlenia</h4>                
-                    </div>     
-                    {% else %}
                     <div class="row" style="text-align: center;">
                         <div class="col">
                             <a type="button" class="btn btn-info btn-custom btn-block" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='nonevidenced') }}">Drukuj różnice</a> 
@@ -262,16 +259,17 @@
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Data rozpoczęcia</th>
-                            <th scope="col">Data zakończenia</th>
-                            <th scope="col">Akcje</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Nr. inw.</th>
+                                <th scope="col">Lokalizacja</th>
+                                <th scope="col">Data dodania</th>
+                                <th scope="col">Akcje</th>
                             </tr>
                         </thead>
                         <tbody>
                                 {% for item in items_nonevidenced %}
                                 <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                    <td><a href="#">{{ item.id }}</a>
+                                    <td><a href="#">{{ loop.index }}</a>
                                         <td class="hidden-xs">{{ item.inv_number}}</td>
                                         <td class="hidden-xs">{{ item.localization }}</td>
                                         <td class="hidden-xs">{{ item.add_date.strftime('%d-%m-%Y %H:%M:%S')}}</td>
@@ -282,24 +280,16 @@
                                 {% endfor %}                                  
                         </tbody>
                     </table>  
-                    {% endif %}
                 </div>                 
                 <div id="stocktakingsUnknown">
-                    {% if items_unknown.first() == None %}
-                    <div class="container" style="text-align: center; font-family: khand;">
-                        <i class="fas fa-sad-tear fa-5x"></i>
-                        <br /><br />
-                        <h4>Brak elementów do wyświetlenia</h4>                
-                    </div>     
-                    {% else %}
-                        {% if stocktaking.finished == True %}
+                    {% if stocktaking.finished == True %}
                         <div class="row" style="text-align: center;">
                             <div class="col">
                                 <a type="button" class="btn btn-info btn-custom btn-block" href="{{ url_for('invent.inv_document', inv_id=stocktaking.id, doc_type='unknown') }}">Drukuj nieznane</a> 
                             </div>
                             <br/><br/>                                                                               
                         </div>  
-                        {% endif %}                  
+                    {% endif %}                  
                     <table class="table table-striped">
                         <thead class="thead-custom">
                             <tr>
@@ -308,7 +298,9 @@
                                 <th scope="col">Lokalizacja</th>
                                 <th scope="col">Data dodania</th>
                                 <th scope="col">Opis</th>
+                                {% if current_user.role != 4 %}
                                 <th scope="col">Akcje</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -319,14 +311,15 @@
                                         <td class="hidden-xs">{{ unk.localization }}</td>
                                         <td class="hidden-xs">{{ unk.add_date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
                                         <td class="hidden-xs">{{ unk.description }}</td>
+                                        {% if current_user.role != 4 %}
                                         <td>
                                             <a type="button" class="btn btn-danger btn-custom" onclick="confirmUnknownDelete('{{unk.id}}')">Usuń</a>
                                         </td> 
+                                        {% endif %}
                                 </tr>                                   
                                 {% endfor %}                                  
                         </tbody>
                     </table>  
-                    {% endif %}
                 </div> 
 
             </div>

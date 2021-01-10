@@ -1,0 +1,43 @@
+{%- extends "base.html" -%}
+{%- block mycontent -%}
+<script>
+    $(document).ready(function(){
+        $(".Site-content").css('background-image','url("/static/img/docs-bcg.png")');
+        $('.table').dataTable();
+    });
+</script>
+<div class="container">
+    <div class="content-header">
+        <div class="row">
+            <div class="col">
+                <h2>Lista załączników:</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="docsAttachments">
+        <table id="attachTable" class="table table-striped">
+            <thead class="thead-custom">
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Numer inw.</th>
+                <th scope="col">Nazwa przedm.</th>
+                <th scope="col">Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for attach in attachments %}
+                        <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+                            <td><a href="#">{{ loop.index }}</a>
+                            <td class="hidden-xs"><a href="{{ url_for('items.occurrence_details',occur_id=attach['occur_id']) }}">{{ attach['folder_name'].replace('-','/') }}</a></td>
+                            <td class="hidden-xs">{{ attach['item_name'] }}</td>
+                            <td>
+                                <a type="button" class="btn btn-success btn-custom" href="{{ url_for('docs.docs_occur_attach',inv_number=attach['folder_name'],filename=attach['file_name']) }}">Załączniki</a>
+                            </td>
+                        </tr>   
+                    {% endfor %}                                 
+            </tbody>
+        </table>
+    </div>   
+</div>
+{%- endblock -%}

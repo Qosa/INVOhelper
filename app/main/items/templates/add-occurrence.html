@@ -3,15 +3,19 @@
 {% block mycontent %}
 <script>
     $(document).ready(function() {
+
+        $(".Site-content").css('background-image','url("/static/img/items-bcg.png")');
+
         $("#invNbrGenerator").click(function() {
             $('#inv_number').val('{{ generated_value }}');
+            $("#inv_number").prop("readonly", true);
             $("#invNbrGenerator").prop("disabled",true);
         });
 
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
-<div class='col-header'>
+<div class='col-header' style='width: 50%;'>
     {% if edit==0 %}
     <h2>Dodaj wystąpienie przedmiotu</h2>
     {% else %}
@@ -26,7 +30,7 @@
                     <p id="indexManual">{{ form.inv_number }}</p>
                 </div>
                 {% if edit==0 %}
-                <div class="col">
+                <div class="col-md-2">
                     {% if generated_value != 0 %}
                         <button type="button" id="invNbrGenerator" class="btn btn-success">Generuj</button>
                     {% else %}

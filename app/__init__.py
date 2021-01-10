@@ -13,9 +13,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app) 
 lm = LoginManager(app)
 
-from app.main import api, user, items, invent, comments
+from app.main import api, user, items, invent, comments, docs
 
-for blueprint in [api, user, items, invent, comments]:
+for blueprint in [api, user, items, invent, comments, docs]:
     app.register_blueprint(blueprint)
 
 from app import models

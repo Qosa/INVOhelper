@@ -1,80 +1,93 @@
 {%- extends "base.html" -%}
 {%- block mycontent -%}
 <script>
-    $(document).ready(function() {
-        $(document).ready(function() {
-        var d = new Date();
-        var month = parseInt(d.getMonth(),10);
-        var year = parseInt(d.getFullYear(),10);
-        $('[data-toggle="tooltip"]').tooltip();
+    var d = new Date();
+    var month = parseInt(d.getMonth()+1,10);
+    var year = parseInt(d.getFullYear(),10);
+    var months = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień']
 
-        var numitems =  $("#calendar li").length;
-
-        $("ul#calendar").css("column-count",Math.round(numitems/6));
-
-    });
-    });
-</script>
-<style>
-    .calendar {
-    padding: 0;
-    margin: 0;
-    flex-wrap: wrap;
-    display: flex;
-    justify-content: space-around;
-    min-width: 400px;
-    border-bottom: #DADCE0 1px solid;
-    border-left: #DADCE0 1px solid;
-    }
-    ul#calendar li {
-        flex: 1 0 14%;
-    }
-
-    ul#calendar li div {
-        margin: 0;
-        padding: 0;
-    }
-
-    .tooltip {
-        position: relative;
-        display: inline-block;
-        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-    }
-
-    .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 120px;
-        background-color: black;
-        color: #fff;
-        text-align: center;
-        padding: 5px 0;
-        border-radius: 6px;
+    $(document).ready(function() {   
         
-        /* Position the tooltip text - see examples below! */
-        position: absolute;
-        z-index: 1;
+        $(".Site-content").css('background-image','url("/static/img/invent-bcg.png")');
+
+        $.ajax({
+            url: "schedule/calendar",
+            type: "get",
+            data: {y: year, m:month},
+            success: function(response) {
+                $("#current_month_name").text(months[month-1]);
+                $("#ajaxCalendar").html(response);
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });  
+    });  
+
+    var flag = 1;
+    var tempYear = 0;
+    var tempMonth = 0;
+
+    function prevMonth(){
+
+        if(flag == 1){
+            tempYear = year;
+            tempMonth = month;
+            flag = 0;
+        } 
+
+        if(tempMonth > 1){
+            tempMonth -=1;
+        } else {
+            tempYear -=1;
+            tempMonth = 12;
+        } 
+
+        $.ajax({
+            url: "schedule/calendar",
+            type: "get",
+            data: {y: tempYear, m:tempMonth},
+            success: function(response) {
+                $("#current_month_name").text(months[tempMonth-1]);
+                $("#ajaxCalendar").html(response);
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });
     }
 
-/* Show the tooltip text when you mouse over the tooltip container */
-    .tooltip:hover .tooltiptext {
-        visibility: visible;
-    }
+    function nextMonth(){
 
-    .overme-task{
-        width: 400px;
-        overflow:hidden; 
-        white-space:nowrap; 
-        text-overflow: ellipsis;
-    }
+        if(flag == 1){
+            tempYear = year;
+            tempMonth = month;
+            flag = 0;
+        } else {
 
-    .overme-calendar {
-        width: 150px;
-        overflow:hidden; 
-        white-space:nowrap; 
-        text-overflow: ellipsis;
-    }
-    
-</style>
+        }
+
+        if(tempMonth < 12){
+                tempMonth +=1;
+        } else {
+            tempYear +=1;
+            tempMonth = 1;
+        } 
+
+        $.ajax({
+            url: "schedule/calendar",
+            type: "get",
+            data: {y: tempYear, m:tempMonth},
+            success: function(response) {
+                $("#current_month_name").text(months[tempMonth-1]);
+                $("#ajaxCalendar").html(response);
+            },
+            error: function(xhr) {
+                //Do Something to handle error
+            }
+        });
+    }  
+</script>
 <div class="item-list">
     <div class="container">
         <div class="content-header">
@@ -94,9 +107,11 @@
                     <hr/>
                 </div>
                 <div class="col">
+                    {% if current_user.role != 4 %}
                     <div class="col header-btn">
                         <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_add',inv_id=inv_id) }}">Dodaj</a>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -115,7 +130,9 @@
                     <th scope="col">Zadanie</th>
                     <th scope="col">Przewidywana data rozpoczęcia</th>
                     <th scope="col">Przewidywana data zakończenia</th>
+                    {% if current_user.role != 4 %}
                     <th scope="col">Akcje</th>
+                    {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -129,11 +146,13 @@
                             </td>
                             <td class="hidden-xs">{{ task.date_start.strftime('%Y-%m-%d') }}</td>
                             <td class="hidden-xs">{{ task.date_exp_end.strftime('%Y-%m-%d') }}</td>
+                            {% if current_user.role != 4 %}
                             <td>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_finish', inv_id=task.inv_id, task_id=task.id) }}">Wykonaj</a>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_edit', inv_id=task.inv_id, task_id=task.id) }}">Edytuj</a>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_delete', inv_id=task.inv_id, task_id=task.id) }}">Usuń</a>
                             </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}                                 
                 </tbody>
@@ -166,7 +185,9 @@
                     <th scope="col">Zadanie</th>
                     <th scope="col">Przewidywana data rozpoczęcia</th>
                     <th scope="col">Data zakończenia</th>
+                    {% if current_user.role != 4 %}
                     <th scope="col">Akcje</th>
+                    {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -180,10 +201,12 @@
                             </td>
                             <td class="hidden-xs">{{ task.date_start.strftime('%Y-%m-%d') }}</td>
                             <td class="hidden-xs">{{ task.date_end.strftime('%Y-%m-%d') }}</td>
+                            {% if current_user.role != 4 %}
                             <td>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_retrieve', inv_id=task.inv_id, task_id=task.id) }}">Przywróć</a>
                                 <a type="button" class="btn btn-success btn-custom" href="{{ url_for('invent.inv_task_delete', inv_id=task.inv_id, task_id=task.id) }}">Usuń</a>
                             </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}                                  
                 </tbody>
@@ -198,60 +221,24 @@
                         <hr/>
                     </div>
                     <div class="col">
-    
+        
                     </div>
                 </div>
             </div>
             <div id="container-test" class="item-list-header">
                 <div class="row">
                     <div class="col">
-                        <input type="button" class="btn btn-success" value="&lt;" onclick="window.location='{{ previous_month_link }}'"
-                        title="Previous month" />
-                        <input type="button" class="btn btn-success" value="&gt;" onclick="window.location='{{ next_month_link }}'"
-                        title="Next month" />
+                        <input type="button" class="btn btn-success" value="&lt;" onclick="prevMonth()" title="Previous month" />
+                        <input type="button" class="btn btn-success" value="&gt;" onclick="nextMonth()" title="Next month" />
                     </div>
                     <div class="col" style="text-align: right;">
-                        <h4>{{ current_month_name }}</h4>                        
+                        <h4 id="current_month_name"></h4>                        
                     </div>                    
                 </div>
-            
-                <ul class="calendar" id="calendarHeader" style="list-style-type:none;">
-                        <li>PONIEDZIALEK</li>
-                        <li>WTOREK</li>
-                        <li>ŚRODA</li>
-                        <li>CZWARTEK</li>
-                        <li>PIĄTEK</li>
-                        <li>SOBOTA</li>
-                        <li>NIEDZIELA</li>
-                </ul>  
-                <div id="changer"> 
-                    <ul class="calendar col" id="calendar" style="list-style-type:none;">
-                        {% for day in range(1,43) %}
-                                {% if day > month_data[0] and day <= month_data[1]+month_data[0] %}
-                                <li class="overme-calendar" style="height: 100px; width: 150px; border: 1px solid black;">
-                                    <span>{{ day-month_data[0] }}</span>
-                                    {% for task in tasks %}
-                                        {% if task.date_start.month == month and task.date_start.day == day-month_data[0] %}    
-                                            <div style="border: 1px solid green;" class="container overme-calendar">
-                                                <span class="overme-calendar" style="color: green;" data-toggle="tooltip" data-placement="right" title="{{ task.task }} Rozpoczęcie:{{ task.date_start.strftime('%Y-%m-%d') }} Zakończenie:{{ task.date_exp_end.strftime('%Y-%m-%d') }}">{{ task.task }}</span>  
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}    
-                                </li>    
-                                {% elif day > month_data[1]+month_data[0] %}
-                                <li style="height: 100px; width: 150px; border: 1px solid black; background-color: E6E5E5;">
-                                    <span style="color: black; background-color: E6E5E5;">{{ day - (month_data[0]+month_data[1]) }}</span>  
-                                </li>     
-                                {% else %}
-                                <li style="height: 100px; width: 150px; border: 1px solid black; background-color: E6E5E5;">
-                                    <span style="color: black; background-color: E6E5E5;">{{ prev_month_data[1] - (month_data[0] - day) }}</span>
-                                </li>    
-                                {% endif %}    
-                            </li> 
-                        {% endfor %}
-                    </ul>  
-                </div> 
-            </div>   
+                <div id="ajaxCalendar">
+                    <!-- MIEJSCE NA KALENDARZ -->
+                </div>
+            </div>    
         </div>    
         <div id="csvExport">
             <div class="item-list-header">
@@ -268,10 +255,10 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
-                        <button class="btn btn-success btn-block">Drukuj</button>
+                        <a type="button" class="btn btn-success btn-block btn-custom" href="{{ url_for('invent.inv_document', inv_id=inv_id, doc_type='schedule') }}">Drukuj</a>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-success btn-block">Eksport do .csv</button>
+                        <a type="button" class="btn btn-success btn-block btn-custom" href="{{ url_for('invent.inv_csv_generator', inv_id=inv_id) }}">Eksport do .csv</a>
                     </div>
                     <div class="col">
 

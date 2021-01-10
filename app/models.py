@@ -4,6 +4,7 @@ from sqlalchemy.dialects import postgresql
 from flask_login import UserMixin
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
+import onetimepass
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -14,6 +15,7 @@ class User(UserMixin, db.Model):
     role = db.Column(db.Integer())
     stocktakings = db.Column(db.ARRAY(db.Integer()))
     created = db.Column(db.DateTime(), default=datetime.utcnow)
+    otp_secret = db.Column(db.String(16))
 
     @property
     def password(self):
@@ -29,6 +31,14 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.public_id = str(uuid.uuid4())
+        self.otp_secret = base64.b32encode(os.urandom(10)).decode('utf-8')
+
+    def get_totp_uri(self):
+        return 'otpauth://totp/invohelper:{0}?secret={1}&issuer=invohelper' \
+            .format(self.login, self.otp_secret)    
+
+    def verify_totp(self, token):
+        return onetimepass.valid_totp(token, self.otp_secret)            
 
     def is_scanner(self):
         return self.scanner
@@ -87,7 +97,6 @@ class Comment(db.Model):
     comment = db.Column(db.String(1024))
     create_timestamp = db.Column(db.DateTime, default=datetime.now())
     edit_timestamp = db.Column(db.DateTime, default=datetime.now())
-    deleted = db.Column(db.Integer, default=0)
 
     def __init__(self, id, occur_id, comment):
         #self.user = user

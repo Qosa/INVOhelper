@@ -6,6 +6,7 @@
     <script>
         $(document).ready(function() {
 
+            $(".Site-content").css('background-image','url("/static/img/items-bcg.png")');
             $('[data-toggle="tooltip"]').tooltip();
 
         });
@@ -17,6 +18,98 @@
             } else {}
         }
     </script>
+    {% if occurrence.item_id == 1 %}
+    <!-- element usuniety -->
+    <div class="container">
+        <div class="content-header">
+            <div class="row">
+                <div class="col">
+                    <h2>Przedmiot usunięty</h2>
+                </div>
+            </div>
+            <hr/>
+        </div>
+
+        <div class="item-info">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="container">
+                        <img src="{{ img }}" style="max-width: 100%; max-height: 200px; margin-top: 15px;">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-4 col-header">
+                            <h4>Typ:</h3>
+                        </div>
+                        <div class="col-md-8 col-item-data">
+                            {{ occurrence.get_item_name(occurrence.item_id) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-header">
+                            <h4>Data usunięcia:</h3>
+                        </div>
+                        <div class="col-md-8 col-item-data">
+                            {{ occurrence.add_date.strftime('%d-%m-%Y %H:%M:%S') }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-header">
+                            <h4>Historyczna lokalizacja:</h3>
+                        </div>
+                        <div class="col-md-8 col-item-data">
+                            {{ occurrence.localization }}
+                        </div>
+                    </div>    
+                    <div class="row">
+                        <div class="col-md-4 col-header">
+                            <h4>Numer inwentarzowy:</h3>
+                        </div>
+                        <div class="col-md-8 col-item-data">
+                            <div class="row">
+                                <div class="col">
+                                    {{ occurrence.inv_number }}
+                                </div>
+                            </div>  
+                        </div>
+                    </div>                                                                                            
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="list-group">
+                <li class="list-group-item list-group-item col-header">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-8">
+                            <h4>Opis usuniętego przedmiotu:</h4>
+                        </div>
+                    </div>
+                </li>
+                {%- if comments.count() != 0 -%}
+                    {%- for comment in comments -%}
+                    <li class="list-group-item clearfix">
+                        <div class="media">
+                            <div class="media-body">
+                                <p class="list-group-item-text">{{ comment.comment }}</p>
+                            </div>
+                        </div>
+                    </li>
+                    {%- endfor -%}   
+                {%- else -%}
+                    <li class="list-group-item clearfix">
+                        <div class="media">
+                            <div class="media-body">
+                                <p class="list-group-item-text">Brak opisu</p>
+                            </div>
+                        </div>
+                    </li>
+                {%- endif -%}    
+        </ul>           
+    </div>
+    {% else %}
     <div class="container">
         <div class="content-header">
             <div class="row">
@@ -171,7 +264,7 @@
                 {%- endif -%}    
         </ul>           
     </div>
-
+    {% endif %}
     <div class="modal fade" id="qrModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -1,16 +1,35 @@
-invent/1/schedule/addtask
-- nie dziala wydruk harmonogramu
-- nie dziala eksport do pliku .csv
-- trzeba poprawic kalendarz tak, aby nie przeladowywal strony	
-- przyjrzec sie przetwarzaniu dat w kalendarzu	
+PRACA
+- edytowac swoja czesc pracy
+- wrzucić diagramy do załączników
+- sprawdzić zgodność/spójność całości
+- sprawdzic zgodnosc z Rubrics
+- sprawdzic zgodnosc z wymogami edytorskimi
+zalaczniki:
+- diagramy
+- struktury katalogow
+- formularz ankiety
+- dane logowania do aplikacji
+- opis frontendu
 
-- moduł DOKUMENTY
+APLIKACJA
+- dodanie w kreatorze opcji "wydarzenie jednorazowe" oraz możliwości usunięcia wydarzenia
+- wypelnienie bazy danych
+
 - dodanie stron dla obslugi 404, 500 oraz braku uprawnien
-
+- strona logowania
+- responsywnosc
+- sprawdzenie pod kątem unikalności rekordów
 
 [MOBILE]
 - implementacja komunikacji z tokenem
-- 
+
+USERS
++otp_secret varchar(16)
+COMMENTS
+-deleted
+SCHEDULE
++date_exp_end date
+
 
         {% if form.errors %}
             {{ form.errors }}

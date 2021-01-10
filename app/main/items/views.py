@@ -1,10 +1,10 @@
-import os, glob, re
+import os, glob, re, shutil
 from pathlib import Path
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort, send_file
 from werkzeug.utils import secure_filename
 from . import items, forms
 from app import app, db
-from app.models import Item, ItemList, Comment, Generator
+from app.models import Item, ItemList, Comment, Generator, Evidenced
 from ..comments.forms import CommentForm
 from ..decorators import permissions_required, admin_required
 from tempfile import NamedTemporaryFile
@@ -30,21 +30,47 @@ def details(item_id):
     occurrences = ItemList.query.filter_by(item_id=item_id)
     return render_template('item-details.html', item=item, occurrences=occurrences)   
 
-def genetator():
-    initial_value = '1000010000000'
-    try:
-        last_value = Generator.query.order_by(Generator.id.desc()).first().generated_value
-        new_value = str(int(last_value[:6]) + 1) + '0000000'
-        generate = Generator(new_value)
-        return generate   
-    except:
-        generate = Generator(initial_value)
-        return generate
+def generator(index_nbr):
+    if index_nbr == 'item':
+        initial_value = '1000010000000'
+        try:
+            last_value = Generator.query.order_by(Generator.generated_value.desc()).first().generated_value
+            if last_value >= '9999990000000':
+                return 0
+            else:   
+                new_value = str(int(last_value[:6]) + 1) + '0000000'
+                while True:
+                    if ItemList.query.filter(ItemList.inv_number.like(new_value[:6]+'%')).first() == None:
+                        break  
+                    else:
+                        new_value = str(int(nev_value[:6]) + 1) + '0000000'
+
+                generate = Generator(new_value)
+                return generate
+        except:
+            generate = Generator(initial_value)
+            return generate
+    else:
+        last_value = Generator.query.filter(Generator.generated_value.like(index_nbr[:6]+'%')).order_by(Generator.generated_value.desc()).first().generated_value
+        print(last_value)
+        if last_value[6:] == '9999999':
+            return 0
+        else:   
+            new_value = str(int(last_value)+1)
+            print(new_value)
+            while True:
+                if ItemList.query.filter_by(inv_number=str(new_value)).first() == None:
+                    break  
+                else:
+                    new_value = str(int(new_value)+1)  
+
+            generate = Generator(new_value)
+            return generate          
 
 @items.route('/add', methods=['GET', 'POST'] )
 def add():
     form = forms.AddItemForm(request.form)
-    generated_value = genetator()
+    generated_value = generator('item')
     if form.validate_on_submit():
         item = Item(form.name.data, form.index_nbr.data,
                     form.description.data)
@@ -80,6 +106,9 @@ def edit(item_id):
 @admin_required
 def delete(item_id):
     item = Item.query.get_or_404(item_id)
+    occurrences = ItemList.query.filter_by(item_id=item.id)
+    for occur in occurrences:
+        occurrence_remover_func(occur.id)
     db.session.delete(item)
     db.session.commit()
     flash(u'Pomyślnie usunięto pozycję!', 'danger')
@@ -89,9 +118,9 @@ def delete(item_id):
 def add_occurrence(item_id):
     form = forms.AddOccurrenceForm()
     item = Item.query.get_or_404(item_id)
-    print(app.config['TEMP_CODES_DEST'])
     if len(item.index_nbr) == 13 and item.index_nbr.isdigit():
-        generated_inv_number = int(item.index_nbr)+1
+        generated_inv_number = generator(item.index_nbr)
+        print(generated_inv_number)
     else:
         generated_inv_number = 0    
     if request.method == 'POST' and form.validate_on_submit():
@@ -112,11 +141,15 @@ def add_occurrence(item_id):
             form.documents.data.save(app.config['UPLOADED_DOCS_DEST']+dir_name+'/'+filename_doc)
         occurrence = ItemList(item_id, form.inv_number.data, form.localization.data,
                     form.img.data.filename, form.documents.data.filename)
-        db.session.add(occurrence)
+        if form.inv_number.data == generated_inv_number.generated_value:
+            db.session.add(occurrence) 
+            db.session.add(generated_inv_number)
+        else:
+            db.session.add(occurrence)    
         db.session.commit()
         flash(u'Dodano wystąpienie przedmiotu!', 'success')
         return redirect(url_for('items.details',item_id=item_id))
-    return render_template('add-occurrence.html', form=form, generated_value=generated_inv_number, edit=0)   
+    return render_template('add-occurrence.html', form=form, generated_value=generated_inv_number.generated_value, edit=0)   
 
 @items.route('/occurrence/<int:occur_id>/details')
 def occurrence_details(occur_id):
@@ -167,7 +200,7 @@ def occurrence_details(occur_id):
         img = '/static/photos/'+dir_name+'/'+occurrence.img
     else:
         img = '/static/img/no-photo.PNG'     # obrazek domyślny w przypadku braku zdjęcia
-    comments = occurrence.comments.filter_by(deleted=0) \
+    comments = occurrence.comments \
             .order_by(Comment.edit_timestamp.desc())    
     return render_template('occurrence-details.html', form=form, occurrence=occurrence, comments=comments, qrCode=qrCode, barCode=barCode, dirname=dir_name, img=img)      
 
@@ -218,19 +251,50 @@ def edit_occurrence(occur_id):
     form.localization.data = occurrence.localization 
     return render_template("add-occurrence.html", form=form, occurrence=occurrence, title=u"Edytuj pozycję", edit=1)     
 
+def occurrence_remover_func(occur_id):
+    occurrence = ItemList.query.get_or_404(occur_id)
+    # dodanie wystapienia do usunietych
+    deleted_occurrence = ItemList(1,occurrence.inv_number,occurrence.localization,'','')
+    db.session.add(deleted_occurrence)
+    db.session.flush()
+    db.session.refresh(deleted_occurrence)
+    # dodanie komentarza o usunietym przedmiocie
+    item = Item.query.get_or_404(occurrence.item_id)
+    lastId_Comment = Comment.query.order_by(Comment.id.desc()).first().id
+    db.session.add(Comment(lastId_Comment+1,deleted_occurrence.id,'Nazwa: '+item.name+' Opis: '+item.description))
+    # edycja informacji o wystapieniu przedmiotu w spisach
+    evidenced = Evidenced.query.filter_by(item_id=occurrence.id)
+    for evid in evidenced:
+        evid.item_id = deleted_occurrence.id
+        db.session.add(evid)
+    # usuniecie komentarzy
+    comments_remover_func(occur_id)
+    # usuniecie wystapienia przedmiotu
+    db.session.delete(occurrence)  
+    db.session.commit()   
+    # usuniecie zalacznikow 
+    try:
+        shutil.rmtree(app.config['UPLOADED_DOCS_DEST']+re.sub('[^a-zA-Z0-9.]','-',occurrence.inv_number))
+    except:
+        pass
+    return item.id
+
+def comments_remover_func(occur_id):
+    comments = Comment.query.filter_by(item_id=occur_id)
+    for comment in comments:
+        db.session.delete(comment)       
+    return 0  
+
 @items.route('occurrence/<int:occur_id>/delete/')
 @admin_required
 def delete_occurrence(occur_id):
-    occurrence = ItemList.query.get_or_404(occur_id)
-    item_id = occurrence.item_id
-    db.session.delete(occurrence)
+    item_id = occurrence_remover_func(occur_id)
     db.session.commit()
-    occurrences = ItemList.query.filter_by(item_id=item_id)
     flash(u'Pomyślnie usunięto pozycję!', 'danger')
     return redirect(url_for('items.details', item_id=item_id), code=307)        
 
 @items.route('occurrence/download/<inv_number>/<filename>/', methods=['GET', 'POST'])
 def download_occurrence_attachment(inv_number,filename):
     docs = os.path.join(app.root_path, app.config['UPLOADED_DOCS_DEST']+re.sub('[^a-zA-Z0-9.]','-',inv_number))
-    return send_from_directory(directory=docs,
-                               filename=filename)
+    print(app.config['UPLOADED_DOCS_DEST']+re.sub('[^a-zA-Z0-9.]','-',inv_number)+'/'+filename)
+    return send_from_directory(directory=docs, filename=re.sub('[^a-zA-Z0-9.]','-',filename))

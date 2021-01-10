@@ -12,23 +12,33 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         the_user = User.query.filter(User.login.ilike(form.login.data)).first()
-        if the_user is not None and the_user.verify_password(form.password.data):
-            login_user(the_user, form.remember_me.data)
-            if the_user.role == 1:
-                return redirect(url_for('user.user_admin'))
-            elif the_user.role == 2:
-                return redirect(url_for('user.user_commember'))    
-            else:
-                flash(u'%s - Logowanie zakończone sukcesem!' % the_user.login, 'success')
-                return redirect(url_for('user.details'))
-        flash(u'Niepoprawne dane logowania!', 'danger')
+        if the_user.login != 'Administrator':
+            if the_user is not None and the_user.verify_password(form.password.data):
+                login_user(the_user, form.remember_me.data)
+                if the_user.role == 2 or the_user.role == 4:
+                    return redirect(url_for('user.user_commember'))    
+                else:
+                    flash(u'%s - Logowanie zakończone sukcesem!' % the_user.login, 'success')
+                    return redirect(url_for('user.details'))
+            else:        
+                flash(u'Niepoprawne dane logowania!', 'danger')
+        else:
+            print(the_user.get_totp_uri())
+            if the_user is not None and the_user.verify_password(form.password.data) and the_user.verify_totp(form.token.data):
+                login_user(the_user, form.remember_me.data)
+                if the_user.role == 1:
+                    return redirect(url_for('user.user_admin'))   
+                else:
+                    flash(u'%s - Logowanie zakończone sukcesem!' % the_user.login, 'success')
+                    return redirect(url_for('user.details'))
+            else:        
+                flash(u'Niepoprawne dane logowania!', 'danger')    
     return render_template("login.html", form=form)
 
 @user.route('/logout/')
 @login_required
 def logout():
     logout_user()
-    flash(u'Wylogowano pomyślnie!', 'info')
     return redirect(url_for('user.login'))
 
 @user.route('/admin/')

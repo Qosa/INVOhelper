@@ -3,13 +3,15 @@
 {% block mycontent %}
 <script>
     $(document).ready(function() {
+        $(".Site-content").css('background-image','url("/static/img/items-bcg.png")');
         $("#invNbrGenerator").click(function() {
             $('#index_nbr').val('{{ generated_value }}');
+            $("#index_nbr").prop("readonly", true);
             $("#invNbrGenerator").prop("disabled",true);
         });
     });
 </script>
-<div class='col-header'>
+<div class='col-header' style='width: 50%;'>
     {% if edit == 0 %}
     <h2>Dodaj przedmiot</h2>
     {% else %}
@@ -28,7 +30,7 @@
                     <p id="indexManual">{{ form.index_nbr }}</p>
                 </div>
                 {% if edit == 0 %}
-                <div class="col">
+                <div class="col-md-2">
                     <button type="button" id="invNbrGenerator" class="btn btn-success">Generuj</button>
                 </div>
                 {% endif %}

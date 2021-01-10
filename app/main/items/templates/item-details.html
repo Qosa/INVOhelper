@@ -15,6 +15,12 @@
             window.location.href = link;
         } else {}
     }
+
+    $(document).ready(function(){
+        $(".Site-content").css('background-image','url("/static/img/items-bcg.png")');
+        $('.table').dataTable();
+    });
+
     </script>
     <!-- CONTENT -->
     <div class="container">
@@ -31,7 +37,7 @@
             <hr/>
         </div>
 
-        <div class="item-info" style="height: 30%;">
+        <div class="item-info">
             <div class="row">
                 <div class="col">
                     <div class="row">
@@ -61,7 +67,15 @@
                         <div class="col col-item-data">
                             {{ item.count_occurrences() }}
                         </div>
-                    </div>                                        
+                    </div>   
+                    <div class="row">
+                        <div class="col col-header">
+                            <h4>Opis:</h3>
+                        </div>
+                        <div class="col col-item-data">
+                            {{ item.description }}
+                        </div>
+                    </div>                                      
                 </div>
             </div>
         </div>
@@ -78,13 +92,7 @@
                         </div>
                     </div>
                 </div>
-                {% if occurrences.first() == None %}
-                <div class="container" style="text-align: center; font-family: khand;">
-                    <i class="fas fa-sad-tear fa-5x"></i>
-                    <br /><br />
-                    <h4>Brak elementów do wyświetlenia</h4>                
-                </div>
-                {% else %}
+                <hr/>
                 <table class="table table-striped">
                     <thead class="thead-custom">
                         <tr>
@@ -98,7 +106,7 @@
                       <tbody>
                               {% for occurrence in occurrences %}
                               <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
-                                  <td><a href="#">{{ occurrence.id }}</a>
+                                  <td><a href="#">{{ loop.index }}</a>
                                   <td class="hidden-xs">{{ occurrence.inv_number}}</td>
                                   <td class="hidden-xs">{{ occurrence.localization }}</td>
                                   <td class="hidden-xs">{{ occurrence.add_date.strftime("%d-%m-%Y %H:%M:%S") }}</td>
@@ -111,7 +119,6 @@
                               {% endfor %}                 
                       </tbody>
                 </table>
-                {% endif %}
             </div>
         </div>
     </div>
